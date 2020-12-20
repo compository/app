@@ -19,14 +19,13 @@
   "dependencies": {
     "@holochain-open-dev/common": "git+https://github.com/holochain-open-dev/common.git#ui-build",
     "@holochain/conductor-api": "0.0.1-dev.14",
-    "blocky": "git+https://github.com/guillemcordoba/blocky.git#ui-build",
-    "bundle_dna": "git+https://github.com/guillemcordoba/bundle-dna.git#build",
-    "compository": "git+https://github.com/guillemcordoba/compository.git#ui-lib-build",
-    "holochain-membrane-context": "git+https://github.com/guillemcordoba/holochain-membrane-context.git",
+    "@holochain-open-dev/membrane-context": "^0.1.0",
+    "@compository/blocky": "git+https://github.com/compository/blocky.git#ui-build",
+    "@compository/lib": "git+https://github.com/compository/lib.git#build",
+    "bundle_dna": "git+https://github.com/compository/bundle-dna.git#build",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
     "navigo": "^7.1.2",
-    "scoped-elements": "git+https://github.com/guillemcordoba/scoped-elements.git",
     "scoped-material-components": "git+https://github.com/guillemcordoba/scoped-material-components.git#build"
   },
   "devDependencies": {

@@ -1,5 +1,12 @@
-import { html, LitElement, property, query } from 'lit-element';
-import { Scoped } from 'scoped-elements';
+import {
+  Constructor,
+  html,
+  LitElement,
+  property,
+  PropertyValues,
+  query,
+} from 'lit-element';
+import { ScopedElementsMixin as Scoped } from '@open-wc/scoped-elements';
 import {
   DnaTemplate,
   Hashed,
@@ -9,17 +16,18 @@ import {
   generateDna,
   downloadFile,
   CompositoryInstallDnaDialog,
-} from 'compository';
-import { List } from 'scoped-material-components/dist/mwc-list';
-import { Button } from 'scoped-material-components/dist/mwc-button';
-import { CheckListItem } from 'scoped-material-components/dist/mwc-check-list-item';
-import { CircularProgress } from 'scoped-material-components/dist/mwc-circular-progress';
-import { membraneContext } from 'holochain-membrane-context';
+} from '@compository/lib';
+import { List } from 'scoped-material-components/mwc-list';
+import { Button } from 'scoped-material-components/mwc-button';
+import { CheckListItem } from 'scoped-material-components/mwc-check-list-item';
+import { CircularProgress } from 'scoped-material-components/mwc-circular-progress';
+import { membraneContext } from '@holochain-open-dev/membrane-context';
 import { sharedStyles } from './sharedStyles';
 import { AppWebsocket, CellId } from '@holochain/conductor-api';
+import { threadId } from 'worker_threads';
 
 export class CompositoryComposeZomes extends membraneContext(
-  Scoped(LitElement)
+  Scoped(LitElement) as Constructor<LitElement>
 ) {
   @property()
   zomeDefs!: Array<Hashed<ZomeDef>>;
@@ -44,14 +52,20 @@ export class CompositoryComposeZomes extends membraneContext(
   }
 
   get _compositoryService() {
-    return new CompositoryService(this.appWebsocket as AppWebsocket, this.cellId as CellId);
+    return new CompositoryService(
+      this.membraneContext.appWebsocket as AppWebsocket,
+      this.membraneContext.cellId as CellId
+    );
   }
 
-  connectedCallback() {
-    super.connectedCallback();
+  updated(changedValues: PropertyValues) {
+    super.updated(changedValues);
+    if (changedValues.has('membraneContext') && this.membraneContext) {
+      this.loadZomes();
+    }
   }
 
-  async firstUpdated() {
+  async loadZomes() {
     this.zomeDefs = await this._compositoryService.getAllZomeDefs();
   }
 

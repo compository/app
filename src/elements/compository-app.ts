@@ -1,9 +1,9 @@
-import { css, html, LitElement, property } from 'lit-element';
-import { Scoped } from 'scoped-elements';
-import { BlockyBlockBoard } from 'blocky';
+import { Constructor, css, html, LitElement, property } from 'lit-element';
+import { ScopedElementsMixin as Scoped } from '@open-wc/scoped-elements';
+import { BlockyBlockBoard } from '@compository/blocky';
 import { CompositoryComposeZomes } from './compository-compose-zomes';
 import { CellId } from '@holochain/conductor-api';
-import { membraneContext } from 'holochain-membrane-context';
+import { membraneContext } from '@holochain-open-dev/membrane-context';
 import Navigo from 'navigo';
 import { deserializeHash, serializeHash } from '@holochain-open-dev/common';
 
@@ -12,7 +12,9 @@ const useHash = true; // Defaults to: false
 const hash = '#!'; // Defaults to: '#'
 const router = new Navigo(root, useHash, hash);
 
-export class CompositoryApp extends membraneContext(Scoped(LitElement)) {
+export class CompositoryApp extends membraneContext(
+  Scoped(LitElement) as Constructor<LitElement>
+) {
   @property({ type: Array })
   generatedCellIdToShow: CellId | undefined = undefined;
 
@@ -61,7 +63,7 @@ export class CompositoryApp extends membraneContext(Scoped(LitElement)) {
             <blocky-block-board
               style="flex: 1;"
               .cellId=${this.generatedCellIdToShow}
-              .compositoryCellId=${this.cellId}
+              .compositoryCellId=${this.membraneContext.cellId}
             ></blocky-block-board>
           `
         : html`
