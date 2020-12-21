@@ -21,17 +21,15 @@
     />
   </head>
   <body>
-    <holochain-membrane-context id="membrane-context">
+    <membrane-context-provider id="membrane-context">
       <compository-app style="flex: 1"></compository-app>
-    </holochain-membrane-context>
+    </membrane-context-provider>
 
     <script type="module">
       import { CompositoryApp } from '../dist';
       import ConductorApi from '@holochain/conductor-api';
       import { serializeHash } from '@holochain-open-dev/common';
-      import { scopeElement } from 'scoped-elements/dist/scoped';
-      //import { defineGlobalElements } from 'scoped-elements/dist/global';
-      import { HolochainMembraneContext } from 'holochain-membrane-context';
+      import { MembraneContextProvider } from '@holochain-open-dev/membrane-context';
 
       (async function () {
         const admin = await ConductorApi.AdminWebsocket.connect(
@@ -44,14 +42,14 @@
         const cellIds = await admin.listCellIds();
 
         const compositoryHash =
-          'uhC0k17jxt5BaQRkGTk2pNbPD7vjL9NPQZwiMTLL5TGWWp2znhbyf';
+          'uhC0k3d_GWtAki1I9l6DTAoLnwfWlVR74MHrndcVmhILLREaNX-VN';
         const compositoryCellId = cellIds.find(
           cellId => serializeHash(cellId[0]) === compositoryHash
         );
 
         customElements.define(
-          'holochain-membrane-context',
-          HolochainMembraneContext
+          'membrane-context-provider',
+          MembraneContextProvider
         );
 
         const context = document.getElementById('membrane-context');
@@ -59,8 +57,7 @@
         context.cellId = compositoryCellId;
         context.appWebsocket = app;
         context.adminWebsocket = admin;
-        //defineGlobalElements({ 'compository-app': CompositoryApp });
-        customElements.define('compository-app', scopeElement(CompositoryApp));
+        customElements.define('compository-app', CompositoryApp);
       })();
     </script>
   </body>

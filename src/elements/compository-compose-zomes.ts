@@ -24,7 +24,6 @@ import { CircularProgress } from 'scoped-material-components/mwc-circular-progre
 import { membraneContext } from '@holochain-open-dev/membrane-context';
 import { sharedStyles } from './sharedStyles';
 import { AppWebsocket, CellId } from '@holochain/conductor-api';
-import { threadId } from 'worker_threads';
 
 export class CompositoryComposeZomes extends membraneContext(
   Scoped(LitElement) as Constructor<LitElement>
@@ -60,7 +59,7 @@ export class CompositoryComposeZomes extends membraneContext(
 
   updated(changedValues: PropertyValues) {
     super.updated(changedValues);
-    if (changedValues.has('membraneContext') && this.membraneContext) {
+    if (changedValues.has('membraneContext') && this.membraneContext.appWebsocket) {
       this.loadZomes();
     }
   }

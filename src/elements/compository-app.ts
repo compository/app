@@ -3,7 +3,10 @@ import { ScopedElementsMixin as Scoped } from '@open-wc/scoped-elements';
 import { BlockyBlockBoard } from '@compository/blocky';
 import { CompositoryComposeZomes } from './compository-compose-zomes';
 import { CellId } from '@holochain/conductor-api';
-import { membraneContext } from '@holochain-open-dev/membrane-context';
+import {
+  membraneContext,
+  MembraneContextProvider,
+} from '@holochain-open-dev/membrane-context';
 import Navigo from 'navigo';
 import { deserializeHash, serializeHash } from '@holochain-open-dev/common';
 
@@ -20,6 +23,7 @@ export class CompositoryApp extends membraneContext(
 
   static get scopedElements() {
     return {
+      'membrane-context-provider': MembraneContextProvider,
       'compository-compose-zomes': CompositoryComposeZomes,
       'blocky-block-board': BlockyBlockBoard,
     };
@@ -60,11 +64,15 @@ export class CompositoryApp extends membraneContext(
     return html`
       ${this.generatedCellIdToShow
         ? html`
-            <blocky-block-board
-              style="flex: 1;"
+            <membrane-context-provider
+              .appWebsocket=${this.membraneContext.appWebsocket}
               .cellId=${this.generatedCellIdToShow}
-              .compositoryCellId=${this.membraneContext.cellId}
-            ></blocky-block-board>
+            >
+              <blocky-block-board
+                style="flex: 1;"
+                .compositoryCellId=${this.membraneContext.cellId}
+              ></blocky-block-board>
+            </membrane-context-provider>
           `
         : html`
             <compository-compose-zomes
