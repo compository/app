@@ -15,7 +15,8 @@ export default {
   },
   plugins: [
     replace({
-      'window.customElements.define(tagName, clazz);': '',
+      'window.customElements.define': '',
+      'customElements.define': '',
       delimiters: ['', ''],
     }),
     typescript(),

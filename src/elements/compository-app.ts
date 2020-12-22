@@ -3,6 +3,7 @@ import { ScopedElementsMixin as Scoped } from '@open-wc/scoped-elements';
 import { BlockyBlockBoard } from '@compository/blocky';
 import { CompositoryComposeZomes } from './compository-compose-zomes';
 import { CellId } from '@holochain/conductor-api';
+import { Card } from 'scoped-material-components/mwc-card';
 import {
   membraneContext,
   MembraneContextProvider,
@@ -26,6 +27,7 @@ export class CompositoryApp extends membraneContext(
       'membrane-context-provider': MembraneContextProvider,
       'compository-compose-zomes': CompositoryComposeZomes,
       'blocky-block-board': BlockyBlockBoard,
+      'mwc-card': Card,
     };
   }
 
@@ -75,9 +77,16 @@ export class CompositoryApp extends membraneContext(
             </membrane-context-provider>
           `
         : html`
-            <compository-compose-zomes
-              @dna-installed=${(e: CustomEvent) => this.onCellInstalled(e)}
-            ></compository-compose-zomes>
+            <div
+              style="flex: 1; display: flex; align-items: center; justify-content: center"
+            >
+              <mwc-card style="width: 400px;">
+                <compository-compose-zomes
+                  style="margin: 8px;"
+                  @dna-installed=${(e: CustomEvent) => this.onCellInstalled(e)}
+                ></compository-compose-zomes>
+              </mwc-card>
+            </div>
           `}
     `;
   }

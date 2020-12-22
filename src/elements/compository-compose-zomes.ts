@@ -59,7 +59,10 @@ export class CompositoryComposeZomes extends membraneContext(
 
   updated(changedValues: PropertyValues) {
     super.updated(changedValues);
-    if (changedValues.has('membraneContext') && this.membraneContext.appWebsocket) {
+    if (
+      changedValues.has('membraneContext') &&
+      this.membraneContext.appWebsocket
+    ) {
       this.loadZomes();
     }
   }
@@ -107,6 +110,7 @@ export class CompositoryComposeZomes extends membraneContext(
         id="install-dna-dialog"
       ></compository-install-dna-dialog>
       <div class="column">
+        <span style="font-size: 20px; font-weight: bold; margin-top: 8px;">Compose zomes</span>
         <mwc-list
           multi
           @selected=${(e: CustomEvent) =>
@@ -120,7 +124,8 @@ export class CompositoryComposeZomes extends membraneContext(
         </mwc-list>
 
         <mwc-button
-          label="CREATE DNA TEMPLATE"
+          raised
+          label="GENERATE DNA"
           @click=${() => this.createDnaTemplate()}
         ></mwc-button>
       </div>`;
