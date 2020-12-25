@@ -1,4 +1,4 @@
-import plugins from '../web-dev.plugins.mjs';
+import plugins from './web-dev.plugins.mjs';
 
 export default {
   port: 8082,
@@ -6,7 +6,7 @@ export default {
   nodeResolve: {
     browser: true,
   },
-  appIndex: 'demo/index.html',
+  appIndex: 'index.html',
   open: true,
   plugins,
 };

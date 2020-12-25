@@ -2,18 +2,19 @@ import { Constructor, css, html, LitElement, property } from 'lit-element';
 import { ScopedElementsMixin as Scoped } from '@open-wc/scoped-elements';
 import { BlockyBlockBoard } from '@compository/blocky';
 import { CompositoryComposeZomes } from './compository-compose-zomes';
-import { CellId } from '@holochain/conductor-api';
+import { AdminWebsocket, CellId } from '@holochain/conductor-api';
 import { Card } from 'scoped-material-components/mwc-card';
 import {
   membraneContext,
   MembraneContextProvider,
 } from '@holochain-open-dev/membrane-context';
 import Navigo from 'navigo';
-import { deserializeHash, serializeHash } from '@holochain-open-dev/common';
+import { serializeHash } from '@holochain-open-dev/common';
+import { CircularProgress } from 'scoped-material-components/mwc-circular-progress';
 
 const root = null;
 const useHash = true; // Defaults to: false
-const hash = '#!'; // Defaults to: '#'
+const hash = '#'; // Defaults to: '#'
 const router = new Navigo(root, useHash, hash);
 
 export class CompositoryApp extends membraneContext(
@@ -22,23 +23,35 @@ export class CompositoryApp extends membraneContext(
   @property({ type: Array })
   generatedCellIdToShow: CellId | undefined = undefined;
 
+  @property({ type: Array })
+  _loading = false;
+
   static get scopedElements() {
     return {
       'membrane-context-provider': MembraneContextProvider,
       'compository-compose-zomes': CompositoryComposeZomes,
       'blocky-block-board': BlockyBlockBoard,
       'mwc-card': Card,
+      'mwc-circular-progress': CircularProgress,
     };
+  }
+
+  async loadCellId(dnaHash: string) {
+    this._loading = true;
+    const cellIds = await (this.membraneContext
+      .adminWebsocket as AdminWebsocket).listCellIds();
+    this.generatedCellIdToShow = cellIds.find(
+      cellId => serializeHash(cellId[0]) === dnaHash
+    );
+
+    this._loading = false;
   }
 
   firstUpdated() {
     router
       .on({
-        '/dna/:dna/:agent': params => {
-          this.generatedCellIdToShow = [
-            deserializeHash(params.dna) as any,
-            deserializeHash(params.agent) as any,
-          ];
+        '/dna/:dna': params => {
+          this.loadCellId(params.dna);
         },
         '*': () => {
           this.generatedCellIdToShow = undefined;
@@ -49,9 +62,7 @@ export class CompositoryApp extends membraneContext(
 
   onCellInstalled(e: CustomEvent) {
     const cellId = e.detail.cellId;
-    router.navigate(
-      `/dna/${serializeHash(cellId[0])}/${serializeHash(cellId[1])}`
-    );
+    router.navigate(`/dna/${serializeHash(cellId[0])}`);
   }
 
   static get styles() {
@@ -80,12 +91,17 @@ export class CompositoryApp extends membraneContext(
             <div
               style="flex: 1; display: flex; align-items: center; justify-content: center"
             >
-              <mwc-card style="width: 400px;">
-                <compository-compose-zomes
-                  style="margin: 8px;"
-                  @dna-installed=${(e: CustomEvent) => this.onCellInstalled(e)}
-                ></compository-compose-zomes>
-              </mwc-card>
+              ${this._loading
+                ? html`<mwc-circular-progress></mwc-circular-progress>`
+                : html`
+                    <mwc-card style="width: 400px;">
+                      <compository-compose-zomes
+                        style="margin: 8px;"
+                        @dna-installed=${(e: CustomEvent) =>
+                          this.onCellInstalled(e)}
+                      ></compository-compose-zomes>
+                    </mwc-card>
+                  `}
             </div>
           `}
     `;

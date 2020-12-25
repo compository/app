@@ -7,7 +7,7 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "scripts": {
-    "start": "concurrently --kill-others --names tsc,web-dev-server \"npm run build-watch\" \"sleep 5 && web-dev-server --config demo/web-dev-server.config.mjs\"",
+    "start": "concurrently --kill-others --names tsc,web-dev-server \"npm run build-watch\" \"sleep 5 && web-dev-server --config web-dev-server.config.mjs\"",
     "build-watch": "rollup -c rollup.config.js -w",
     "build": "rimraf dist && rollup -c rollup.config.js",
     "prepublish": "npm run build",
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@open-wc/eslint-config": "^4.0.0",
+    "@open-wc/rollup-plugin-html": "^1.2.5",
     "@open-wc/testing": "^2.0.0",
     "@rollup/plugin-commonjs": "^15.1.0",
     "@rollup/plugin-replace": "^2.3.4",
