@@ -90,15 +90,15 @@ export class CompositoryComposeZomes extends membraneContext(
     );
 
     const dnaFile = await generateDna(
-      '/node_modules/bundle_dna/bundle_dna_bg.wasm',
       this._compositoryService,
       dnaTemplateHash,
       '',
       []
     );
 
-    downloadFile(dnaFile);
+    // downloadFile(dnaFile);
 
+    this._installDnaDialog.dnaFile = dnaFile;
     this._installDnaDialog.open();
   }
 
@@ -110,7 +110,9 @@ export class CompositoryComposeZomes extends membraneContext(
         id="install-dna-dialog"
       ></compository-install-dna-dialog>
       <div class="column">
-        <span style="font-size: 20px; font-weight: bold; margin-top: 8px;">Compose zomes</span>
+        <span style="font-size: 20px; font-weight: bold; margin-top: 8px;"
+          >Compose zomes</span
+        >
         <mwc-list
           multi
           @selected=${(e: CustomEvent) =>
