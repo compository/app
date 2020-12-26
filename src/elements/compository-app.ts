@@ -146,19 +146,19 @@ export class CompositoryApp extends (Scoped(
 
   render() {
     return html`
-      <membrane-context-provider id="context-provider">
-        ${this._loading
-          ? html`<mwc-circular-progress></mwc-circular-progress>`
-          : this._selectedCellId
-          ? html`<compository-display-dna
-              style="flex: 1;"
-              .cellIdToDisplay=${this._selectedCellId}
-              .compositoryCellId=${this._contextProvider.cellId}
-            ></compository-display-dna>`
-          : html`
-              <div
-                style="flex: 1; display: flex; align-items: center; justify-content: center"
-              >
+      <div class="centering-frame">
+        <membrane-context-provider id="context-provider">
+          ${this._loading
+            ? html`<mwc-circular-progress
+                indeterminate
+              ></mwc-circular-progress>`
+            : this._selectedCellId
+            ? html`<compository-display-dna
+                style="flex: 1;"
+                .cellIdToDisplay=${this._selectedCellId}
+                .compositoryCellId=${this._contextProvider.cellId}
+              ></compository-display-dna>`
+            : html`
                 <div class="row">
                   ${this.renderInstalledCells()}
                   <mwc-card style="width: 400px;">
@@ -169,9 +169,9 @@ export class CompositoryApp extends (Scoped(
                     ></compository-compose-zomes>
                   </mwc-card>
                 </div>
-              </div>
-            `}
-      </membrane-context-provider>
+              `}
+        </membrane-context-provider>
+      </div>
     `;
   }
 }

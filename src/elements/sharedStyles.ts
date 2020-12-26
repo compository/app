@@ -14,4 +14,11 @@ export const sharedStyles = css`
     font-size: 20px;
     font-weight: bold;
   }
+
+  .centering-frame {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 `;

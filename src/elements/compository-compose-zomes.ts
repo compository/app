@@ -1,5 +1,6 @@
 import {
   Constructor,
+  css,
   html,
   LitElement,
   property,
@@ -37,7 +38,14 @@ export class CompositoryComposeZomes extends membraneContext(
   _selectedIndexes: Set<number> = new Set();
 
   static get styles() {
-    return sharedStyles;
+    return [
+      sharedStyles,
+      css`
+        :host {
+          display: flex;
+        }
+      `,
+    ];
   }
 
   static get scopedElements() {
@@ -96,15 +104,15 @@ export class CompositoryComposeZomes extends membraneContext(
       []
     );
 
-    // downloadFile(dnaFile);
-
     this._installDnaDialog.dnaFile = dnaFile;
     this._installDnaDialog.open();
   }
 
   render() {
     if (!this.zomeDefs)
-      return html`<mwc-circular-progress></mwc-circular-progress>`;
+      return html`<div class="centering-frame">
+        <mwc-circular-progress indeterminate></mwc-circular-progress>
+      </div>`;
 
     return html` <compository-install-dna-dialog
         id="install-dna-dialog"
