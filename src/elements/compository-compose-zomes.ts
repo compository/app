@@ -110,9 +110,7 @@ export class CompositoryComposeZomes extends membraneContext(
         id="install-dna-dialog"
       ></compository-install-dna-dialog>
       <div class="column">
-        <span style="font-size: 20px; font-weight: bold; margin-top: 8px;"
-          >Compose zomes</span
-        >
+        <span style="margin-top: 8px;" class="title">Compose zomes</span>
         <mwc-list
           multi
           @selected=${(e: CustomEvent) =>
@@ -120,7 +118,12 @@ export class CompositoryComposeZomes extends membraneContext(
         >
           ${this.zomeDefs.map(
             zomeDef => html`
-              <mwc-check-list-item>${zomeDef.content.name}</mwc-check-list-item>
+              <mwc-check-list-item
+                .selected=${zomeDef.content.name === 'blocky'}
+                .disabled=${zomeDef.content.name === 'blocky'}
+              >
+                ${zomeDef.content.name}
+              </mwc-check-list-item>
             `
           )}
         </mwc-list>

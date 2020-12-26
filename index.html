@@ -21,44 +21,12 @@
     />
   </head>
   <body>
-    <membrane-context-provider id="membrane-context">
-      <compository-app style="flex: 1"></compository-app>
-    </membrane-context-provider>
+    <compository-app style="flex: 1"></compository-app>
 
     <script type="module">
       import { CompositoryApp } from './src/index.ts';
-      import ConductorApi from '@holochain/conductor-api';
-      import { serializeHash } from '@holochain-open-dev/common';
-      import { MembraneContextProvider } from '@holochain-open-dev/membrane-context';
 
-      (async function () {
-        const admin = await ConductorApi.AdminWebsocket.connect(
-          'ws://localhost:1234'
-        );
-        const app = await ConductorApi.AppWebsocket.connect(
-          'ws://localhost:8888'
-        );
-
-        const cellIds = await admin.listCellIds();
-
-        const compositoryHash =
-          'uhC0kOJzkx-aLsDqGXo5uoGKBBq_TwtNIdSZO5yWO78UNrIzWAJki';
-        const compositoryCellId = cellIds.find(
-          cellId => serializeHash(cellId[0]) === compositoryHash
-        );
-
-        customElements.define(
-          'membrane-context-provider',
-          MembraneContextProvider
-        );
-
-        const context = document.getElementById('membrane-context');
-
-        context.cellId = compositoryCellId;
-        context.appWebsocket = app;
-        context.adminWebsocket = admin;
-        customElements.define('compository-app', CompositoryApp);
-      })();
+      customElements.define('compository-app', CompositoryApp);
     </script>
   </body>
 </html>

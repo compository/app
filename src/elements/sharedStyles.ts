@@ -9,4 +9,9 @@ export const sharedStyles = css`
     display: flex;
     flex-direction: row;
   }
+
+  .title {
+    font-size: 20px;
+    font-weight: bold;
+  }
 `;
