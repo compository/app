@@ -15,8 +15,12 @@ export const sharedStyles = css`
     font-weight: bold;
   }
 
-  .centering-frame {
+  .fill {
+    height: 100%;
     flex: 1;
+  }
+
+  .center-content {
     display: flex;
     align-items: center;
     justify-content: center;

@@ -25,6 +25,7 @@ import { CircularProgress } from 'scoped-material-components/mwc-circular-progre
 import { membraneContext } from '@holochain-open-dev/membrane-context';
 import { sharedStyles } from './sharedStyles';
 import { AppWebsocket, CellId } from '@holochain/conductor-api';
+import { TextField } from 'scoped-material-components/mwc-textfield';
 
 export class CompositoryComposeZomes extends membraneContext(
   Scoped(LitElement) as Constructor<LitElement>
@@ -36,6 +37,8 @@ export class CompositoryComposeZomes extends membraneContext(
   _installDnaDialog!: CompositoryInstallDnaDialog;
 
   _selectedIndexes: Set<number> = new Set();
+  @property()
+  _templateName: string | undefined = undefined;
 
   static get styles() {
     return [
@@ -54,6 +57,7 @@ export class CompositoryComposeZomes extends membraneContext(
       'mwc-check-list-item': CheckListItem,
       'mwc-circular-progress': CircularProgress,
       'mwc-button': Button,
+      'mwc-textfield': TextField,
       'compository-install-dna-dialog': CompositoryInstallDnaDialog,
     };
   }
@@ -89,7 +93,7 @@ export class CompositoryComposeZomes extends membraneContext(
       zome_def_hash: def.hash,
     }));
     const dnaTemplate: DnaTemplate = {
-      name: 'adf',
+      name: this._templateName as string,
       zome_defs: zomeDefReferences,
     };
 
@@ -110,15 +114,15 @@ export class CompositoryComposeZomes extends membraneContext(
 
   render() {
     if (!this.zomeDefs)
-      return html`<div class="centering-frame">
+      return html`<div class="fill center-content">
         <mwc-circular-progress indeterminate></mwc-circular-progress>
       </div>`;
 
     return html` <compository-install-dna-dialog
         id="install-dna-dialog"
       ></compository-install-dna-dialog>
-      <div class="column">
-        <span style="margin-top: 8px;" class="title">Compose zomes</span>
+      <div class="column fill">
+        <span class="title">Compose zomes</span>
         <mwc-list
           multi
           @selected=${(e: CustomEvent) =>
@@ -136,7 +140,15 @@ export class CompositoryComposeZomes extends membraneContext(
           )}
         </mwc-list>
 
+        <mwc-textfield
+          @input=${(e: CustomEvent) =>
+            (this._templateName = (e.target as any).value)}
+          label="Dna Template Name"
+          style="margin-bottom: 16px;"
+        ></mwc-textfield>
+
         <mwc-button
+          .disabled=${!this._templateName}
           raised
           label="GENERATE DNA"
           @click=${() => this.createDnaTemplate()}

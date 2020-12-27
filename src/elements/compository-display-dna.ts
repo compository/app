@@ -39,8 +39,9 @@ export class CompositoryDisplayDna extends membraneContext(
   @property({ type: Boolean })
   _profileAlreadyCreated = false;
 
-  @query('#block-board')
-  _board!: BlockyBlockBoard;
+  get board(): BlockyBlockBoard {
+    return this.shadowRoot?.getElementById('block-board') as BlockyBlockBoard;
+  }
 
   static get styles() {
     return [
@@ -89,14 +90,20 @@ export class CompositoryDisplayDna extends membraneContext(
         ></mwc-icon-button>
         <div slot="title">${serializeHash(this.cellIdToDisplay[0])}</div>
 
+${
+  this.board && !this.board.editing
+    ? html`
         <mwc-icon-button
           icon="edit"
           slot="actionItems"
           @click=${() => {
-            this._board.editing = true;
+            this.board.editing = true;
             this.requestUpdate();
           }}
         ></mwc-icon-button>
+      `
+    : html``
+}
         <div style="width: 100vw; height: 100%; display: flex;">
           ${
             !this._profilesZomeExistsInDna || this._profileAlreadyCreated
@@ -105,6 +112,7 @@ export class CompositoryDisplayDna extends membraneContext(
                     id="block-board"
                     style="flex: 1;"
                     .compositoryCellId=${this.compositoryCellId}
+                    @toggle-editing=${() => this.requestUpdate()}
                   ></blocky-block-board>
                 `
               : html`
