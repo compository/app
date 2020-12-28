@@ -91,6 +91,8 @@ export class CompositoryApp extends (Scoped(
       cellId => serializeHash(cellId[0]) === COMPOSITORY_DNA_HASH
     ) as CellId;
 
+    if (!this._compositoryCellId) throw new Error('Compository DNA not found');
+
     this._contextProvider.adminWebsocket = this._adminWebsocket;
     this._contextProvider.appWebsocket = this._appWebsocket;
     this._contextProvider.cellId = this._compositoryCellId;
