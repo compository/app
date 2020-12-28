@@ -4,18 +4,15 @@ import {
   html,
   LitElement,
   property,
-  PropertyValues,
   query,
 } from 'lit-element';
 import { ScopedElementsMixin as Scoped } from '@open-wc/scoped-elements';
 import {
   DnaTemplate,
-  Hashed,
   ZomeDef,
   ZomeDefReference,
   CompositoryService,
-  generateDna,
-  downloadFile,
+  generateDnaFile,
   CompositoryInstallDnaDialog,
 } from '@compository/lib';
 import { List } from 'scoped-material-components/mwc-list';
@@ -26,6 +23,8 @@ import { membraneContext } from '@holochain-open-dev/membrane-context';
 import { sharedStyles } from './sharedStyles';
 import { AppWebsocket, CellId } from '@holochain/conductor-api';
 import { TextField } from 'scoped-material-components/mwc-textfield';
+import { Hashed, serializeHash } from '@holochain-open-dev/common';
+import { Card } from 'scoped-material-components/mwc-card';
 
 export class CompositoryComposeZomes extends membraneContext(
   Scoped(LitElement) as Constructor<LitElement>
@@ -51,17 +50,6 @@ export class CompositoryComposeZomes extends membraneContext(
     ];
   }
 
-  static get scopedElements() {
-    return {
-      'mwc-list': List,
-      'mwc-check-list-item': CheckListItem,
-      'mwc-circular-progress': CircularProgress,
-      'mwc-button': Button,
-      'mwc-textfield': TextField,
-      'compository-install-dna-dialog': CompositoryInstallDnaDialog,
-    };
-  }
-
   get _compositoryService() {
     return new CompositoryService(
       this.membraneContext.appWebsocket as AppWebsocket,
@@ -69,14 +57,8 @@ export class CompositoryComposeZomes extends membraneContext(
     );
   }
 
-  updated(changedValues: PropertyValues) {
-    super.updated(changedValues);
-    if (
-      changedValues.has('membraneContext') &&
-      this.membraneContext.appWebsocket
-    ) {
-      this.loadZomes();
-    }
+  firstUpdated() {
+    this.loadZomes();
   }
 
   async loadZomes() {
@@ -101,12 +83,22 @@ export class CompositoryComposeZomes extends membraneContext(
       dnaTemplate
     );
 
-    const dnaFile = await generateDna(
+    const uuid = '';
+    const properties: any[] = [];
+
+    const dnaFile = await generateDnaFile(
       this._compositoryService,
-      dnaTemplateHash,
-      '',
-      []
+      dnaTemplate,
+      uuid,
+      properties
     );
+
+    await this._compositoryService.publishInstantiatedDna({
+      dna_template_hash: dnaTemplateHash,
+      instantiated_dna_hash: serializeHash(new Uint8Array(dnaFile.dna.hash)),
+      properties,
+      uuid,
+    });
 
     this._installDnaDialog.dnaFile = dnaFile;
     this._installDnaDialog.open();
@@ -121,38 +113,56 @@ export class CompositoryComposeZomes extends membraneContext(
     return html` <compository-install-dna-dialog
         id="install-dna-dialog"
       ></compository-install-dna-dialog>
-      <div class="column fill">
-        <span class="title">Compose zomes</span>
-        <mwc-list
-          multi
-          @selected=${(e: CustomEvent) =>
-            (this._selectedIndexes = e.detail.index)}
-        >
-          ${this.zomeDefs.map(
-            zomeDef => html`
-              <mwc-check-list-item
-                .selected=${zomeDef.content.name === 'blocky'}
-                .disabled=${zomeDef.content.name === 'blocky'}
-              >
-                ${zomeDef.content.name}
-              </mwc-check-list-item>
-            `
-          )}
-        </mwc-list>
+      <mwc-card class="fill">
+        <div class="column fill" style="margin: 16px; min-height: 0px;">
+          <span class="title">Compose zomes</span>
+          <mwc-list
+            style="overflow-y: auto; flex: 1;"
+            multi
+            @selected=${(e: CustomEvent) =>
+              (this._selectedIndexes = e.detail.index)}
+          >
+            ${this.zomeDefs.map(
+              zomeDef => html`
+                <mwc-check-list-item
+                  .selected=${zomeDef.content.name === 'blocky'}
+                  .disabled=${zomeDef.content.name === 'blocky'}
+                >
+                  ${zomeDef.content.name}
+                </mwc-check-list-item>
+              `
+            )}
+          </mwc-list>
 
-        <mwc-textfield
-          @input=${(e: CustomEvent) =>
-            (this._templateName = (e.target as any).value)}
-          label="Dna Template Name"
-          style="margin-bottom: 16px;"
-        ></mwc-textfield>
+          <div class="column">
+            <mwc-textfield
+              @input=${(e: CustomEvent) =>
+                (this._templateName = (e.target as any).value)}
+              label="Dna Template Name"
+              style="margin-bottom: 16px;"
+              required
+            ></mwc-textfield>
 
-        <mwc-button
-          .disabled=${!this._templateName}
-          raised
-          label="GENERATE DNA"
-          @click=${() => this.createDnaTemplate()}
-        ></mwc-button>
-      </div>`;
+            <mwc-button
+              .disabled=${!this._templateName}
+              raised
+              label="GENERATE DNA"
+              @click=${() => this.createDnaTemplate()}
+            ></mwc-button>
+          </div>
+        </div>
+      </mwc-card>`;
+  }
+
+  static get scopedElements() {
+    return {
+      'mwc-list': List,
+      'mwc-check-list-item': CheckListItem,
+      'mwc-circular-progress': CircularProgress,
+      'mwc-button': Button,
+      'mwc-textfield': TextField,
+      'compository-install-dna-dialog': CompositoryInstallDnaDialog,
+      'mwc-card': Card,
+    };
   }
 }

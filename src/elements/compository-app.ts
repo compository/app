@@ -7,15 +7,10 @@ import {
   query,
 } from 'lit-element';
 import { ScopedElementsMixin as Scoped } from '@open-wc/scoped-elements';
-import { BlockyBlockBoard } from '@compository/blocky';
-import type { BlockBoard } from 'block-board';
 import { CompositoryComposeZomes } from './compository-compose-zomes';
 import { AppWebsocket, AdminWebsocket, CellId } from '@holochain/conductor-api';
 import { Card } from 'scoped-material-components/mwc-card';
-import {
-  membraneContext,
-  MembraneContextProvider,
-} from '@holochain-open-dev/membrane-context';
+import { MembraneContextProvider } from '@holochain-open-dev/membrane-context';
 import { serializeHash } from '@holochain-open-dev/common';
 import { CircularProgress } from 'scoped-material-components/mwc-circular-progress';
 import { List } from 'scoped-material-components/mwc-list';
@@ -23,108 +18,103 @@ import { ListItem } from 'scoped-material-components/mwc-list-item';
 import { sharedStyles } from './sharedStyles';
 import { router } from '../router';
 import { CompositoryDisplayDna } from './compository-display-dna';
-import { ADMIN_URL, APP_URL, COMPOSITORY_DNA_HASH } from '../constants';
-import { CompositoryService, Dictionary } from '@compository/lib';
+import {
+  ADMIN_URL,
+  APP_URL,
+  COMPOSITORY_DNA_HASH,
+  EXECUTABLE_URL,
+} from '../constants';
+import {
+  CompositoryInstallDnaDialog,
+  CompositoryService,
+  Dictionary,
+  generateDnaFile,
+} from '@compository/lib';
+import { CompositoryInstalledCells } from './compository-installed-cells';
+import { TopAppBar } from 'scoped-material-components/mwc-top-app-bar';
 
 export class CompositoryApp extends (Scoped(
   LitElement
 ) as Constructor<LitElement>) {
   @property({ type: Array })
-  _installedCellIds: Array<CellId> = [];
-
-  @property({ type: Array })
   _selectedCellId: CellId | undefined = undefined;
 
+  @property({ type: Array })
+  _holochainPresent = false;
   @property({ type: Array })
   _loading = true;
   @query('#context-provider')
   _contextProvider!: MembraneContextProvider;
+  @query('#install-dialog')
+  _installDnaDialog!: CompositoryInstallDnaDialog;
 
-  _dnaTemplateNames: Dictionary<string> = {};
-
-  static get scopedElements() {
-    return {
-      'membrane-context-provider': MembraneContextProvider,
-      'compository-compose-zomes': CompositoryComposeZomes,
-      'compository-display-dna': CompositoryDisplayDna,
-      'mwc-card': Card,
-      'mwc-circular-progress': CircularProgress,
-      'mwc-list': List,
-      'mwc-list-item': ListItem,
-    };
-  }
-
-  async loadCellsIds() {
-    this._loading = true;
-    this._installedCellIds = await (this._contextProvider
-      .adminWebsocket as AdminWebsocket).listCellIds();
-
-    const instantiatedDnaHashes = this._installedCellIds
-      .map(cellId => serializeHash(cellId[0]))
-      .filter(hash => hash !== COMPOSITORY_DNA_HASH);
-
-    this._dnaTemplateNames = await this.fetchDnaTemplateNames(
-      this._contextProvider.appWebsocket,
-      this._contextProvider.cellId as CellId,
-      instantiatedDnaHashes
-    );
-    this._loading = false;
-  }
+  _appWebsocket!: AppWebsocket;
+  _adminWebsocket!: AdminWebsocket;
+  _compositoryCellId!: CellId;
 
   async firstUpdated() {
-    await this.connectToHolochain();
-    router
-      .on({
-        '/dna/:dna': async params => {
-          await this.loadCellsIds();
-          this._selectedCellId = this._installedCellIds.find(
-            cellId => serializeHash(cellId[0]) === params.dna
-          );
-        },
-        '*': async () => {
-          await this.loadCellsIds();
-          this._selectedCellId = undefined;
-        },
-      })
-      .resolve();
+    try {
+      await this.connectToHolochain();
+      this._holochainPresent = true;
+
+      router
+        .on({
+          '/dna/:dna': async params => {
+            const cellIds = await this._adminWebsocket.listCellIds();
+            this._selectedCellId = cellIds.find(
+              cellId => serializeHash(cellId[0]) === params.dna
+            );
+
+            if (!this._selectedCellId) {
+              this.displayInstallDna(params.dna);
+            }
+          },
+          '*': async () => {
+            this._selectedCellId = undefined;
+          },
+        })
+        .resolve();
+    } catch (e) {
+      this._holochainPresent = false;
+    } finally {
+      this._loading = false;
+    }
   }
 
   async connectToHolochain() {
-    const admin = await AdminWebsocket.connect(ADMIN_URL);
-    const app = await AppWebsocket.connect(APP_URL);
+    this._adminWebsocket = await AdminWebsocket.connect(ADMIN_URL);
+    this._appWebsocket = await AppWebsocket.connect(APP_URL);
 
-    this._installedCellIds = await admin.listCellIds();
+    const cellIds = await this._adminWebsocket.listCellIds();
 
-    const compositoryCellId = this._installedCellIds.find(
+    this._compositoryCellId = cellIds.find(
       cellId => serializeHash(cellId[0]) === COMPOSITORY_DNA_HASH
-    );
+    ) as CellId;
 
-    this._contextProvider.adminWebsocket = admin;
-    this._contextProvider.appWebsocket = app;
-    this._contextProvider.cellId = compositoryCellId as CellId;
-
-    await this.loadCellsIds();
+    this._contextProvider.adminWebsocket = this._adminWebsocket;
+    this._contextProvider.appWebsocket = this._appWebsocket;
+    this._contextProvider.cellId = this._compositoryCellId;
   }
 
-  async fetchDnaTemplateNames(
-    appWebsocket: AppWebsocket,
-    compositoryCellId: CellId,
-    instantiatedDnaHashes: string[]
-  ): Promise<Dictionary<string>> {
-    const compositoryService = new CompositoryService(
-      appWebsocket,
-      compositoryCellId
-    );
-    const promises = instantiatedDnaHashes.map(hash =>
-      compositoryService.getTemplateForDna(hash)
+  get _compositoryService(): CompositoryService {
+    return new CompositoryService(this._appWebsocket, this._compositoryCellId);
+  }
+
+  async displayInstallDna(dnaHash: string) {
+    this._loading = true;
+    const template = await this._compositoryService.getTemplateForDna(dnaHash);
+
+    const dnaFile = await generateDnaFile(
+      this._compositoryService,
+      template.dnaTemplate,
+      template.properties,
+      template.uuid
     );
 
-    const templates = await Promise.all(promises);
-    const names: Dictionary<string> = {};
-    for (let i = 0; i < templates.length; i++) {
-      names[instantiatedDnaHashes[i]] = templates[i].dnaTemplate.name;
-    }
-    return names;
+    this._installDnaDialog.dnaFile = dnaFile;
+    this._installDnaDialog.open();
+
+    this._loading = false;
   }
 
   onCellInstalled(e: CustomEvent) {
@@ -143,74 +133,90 @@ export class CompositoryApp extends (Scoped(
     ];
   }
 
-  getNonCompositoryCellIds() {
-    return this._installedCellIds.filter(
-      cellId => serializeHash(cellId[0]) !== COMPOSITORY_DNA_HASH
-    );
+  renderHolochainNotPresent() {
+    return html` <div class="fill center-content">
+      <mwc-card style="width: 600px;">
+        <div class="column" style="margin: 16px">
+          <span class="title" style="margin-bottom: 16px;"
+            >Holochain conductor not found</span
+          >
+          <span style="margin-bottom: 12px;"
+            >It seems that you don't have the compository executable running
+            with admin URL at ${ADMIN_URL}.
+          </span>
+          <span style="margin-bottom: 12px;"
+            >Download
+            <a href="${EXECUTABLE_URL}">the compository executable</a>, run it
+            locally on your machine and refresh this page.
+          </span>
+          <span>
+            We have binaries ready for linux and macos. On Windows, download the
+            linux executable and run it inside a
+            <a
+              href="https://www.omgubuntu.co.uk/how-to-install-wsl2-on-windows-10"
+              >WSL environment</a
+            >.
+          </span>
+        </div></mwc-card
+      >
+    </div>`;
   }
 
-  renderInstalledCells() {
-    return html` <mwc-card style="margin-right: 24px; width: 400px;">
-      <div style="margin: 16px;" class="column fill">
-        <span class="title">Installed DNAs</span>
-        ${this.getNonCompositoryCellIds().length === 0
-          ? html`
-              <div class="fill center-content">
-                <span>You don't have any generated DNAs installed yet</span>
-              </div>
-            `
-          : html`
-              <mwc-list>
-                ${this.getNonCompositoryCellIds().map(
-                  cellId =>
-                    html`<mwc-list-item
-                      @click=${() =>
-                        router.navigate(`/dna/${serializeHash(cellId[0])}`)}
-                      twoline
-                    >
-                      <span
-                        >${this._dnaTemplateNames[
-                          serializeHash(cellId[0])
-                        ]}</span
-                      >
-                      <span slot="secondary">${serializeHash(cellId[0])}</span>
-                    </mwc-list-item>`
-                )}
-              </mwc-list>
-            `}
-      </div>
-    </mwc-card>`;
+  renderContent() {
+    if (this._loading)
+      return html`<div class="fill center-content">
+        <mwc-circular-progress indeterminate></mwc-circular-progress>
+      </div>`;
+    if (!this._holochainPresent) return this.renderHolochainNotPresent();
+    if (this._selectedCellId)
+      return html`<compository-display-dna
+        style="flex: 1;"
+        .cellIdToDisplay=${this._selectedCellId}
+        .compositoryCellId=${this._contextProvider.cellId}
+      ></compository-display-dna>`;
+    else
+      return html`
+    <mwc-top-app-bar style="flex: 1; display: flex;">
+    <div slot="title">Compository</div>
+
+  <div class="fill row" style="width: 100vw; height: 100%; ">
+      <compository-installed-cells class="fill"
+      style="margin: 32px; margin-right: 0;"
+      ></compository-installed-cells>
+      
+        <compository-compose-zomes
+        style="margin: 32px;"
+          class="fill"
+          @dna-installed=${(e: CustomEvent) => this.onCellInstalled(e)}
+        ></compository-compose-zomes>
+      </mwc-card>
+  
+  </div>
+  </mwc-top-app-bar>
+`;
   }
 
   render() {
     return html`
+      <compository-install-dna-dialog
+        id="install-dialog"
+      ></compository-install-dna-dialog>
       <membrane-context-provider id="context-provider">
-        ${this._loading
-          ? html`<div class="fill center-content">
-              <mwc-circular-progress indeterminate></mwc-circular-progress>
-            </div>`
-          : this._selectedCellId
-          ? html`<compository-display-dna
-              style="flex: 1;"
-              .cellIdToDisplay=${this._selectedCellId}
-              .compositoryCellId=${this._contextProvider.cellId}
-            ></compository-display-dna>`
-          : html`
-              <div class="fill center-content">
-                <div class="row">
-                  ${this.renderInstalledCells()}
-                  <mwc-card style="width: 400px;">
-                    <compository-compose-zomes
-                      class="fill"
-                      style="margin: 16px;"
-                      @dna-installed=${(e: CustomEvent) =>
-                        this.onCellInstalled(e)}
-                    ></compository-compose-zomes>
-                  </mwc-card>
-                </div>
-              </div>
-            `}
+        ${this.renderContent()}
       </membrane-context-provider>
     `;
+  }
+
+  static get scopedElements() {
+    return {
+      'membrane-context-provider': MembraneContextProvider,
+      'compository-compose-zomes': CompositoryComposeZomes,
+      'compository-display-dna': CompositoryDisplayDna,
+      'compository-install-dna-dialog': CompositoryInstallDnaDialog,
+      'compository-installed-cells': CompositoryInstalledCells,
+      'mwc-circular-progress': CircularProgress,
+      'mwc-top-app-bar': TopAppBar,
+      'mwc-card': Card,
+    };
   }
 }

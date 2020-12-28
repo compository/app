@@ -16,7 +16,6 @@ export const sharedStyles = css`
   }
 
   .fill {
-    height: 100%;
     flex: 1;
   }
 
@@ -24,5 +23,8 @@ export const sharedStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  :host {
+    display: flex;
   }
 `;
