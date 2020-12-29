@@ -104,19 +104,23 @@ export class CompositoryApp extends (Scoped(
 
   async displayInstallDna(dnaHash: string) {
     this._loading = true;
-    const template = await this._compositoryService.getTemplateForDna(dnaHash);
+    try {
+      const template = await this._compositoryService.getTemplateForDna(
+        dnaHash
+      );
 
-    const dnaFile = await generateDnaFile(
-      this._compositoryService,
-      template.dnaTemplate,
-      template.properties,
-      template.uuid
-    );
+      const dnaFile = await generateDnaFile(
+        this._compositoryService,
+        template.dnaTemplate,
+        template.properties,
+        template.uuid
+      );
 
-    this._installDnaDialog.dnaFile = dnaFile;
-    this._installDnaDialog.open();
-
-    this._loading = false;
+      this._installDnaDialog.dnaFile = dnaFile;
+      this._installDnaDialog.open();
+    } catch (e) {
+      this.displayInstallDna(dnaHash);
+    }
   }
 
   onCellInstalled(e: CustomEvent) {
@@ -137,27 +141,25 @@ export class CompositoryApp extends (Scoped(
 
   renderHolochainNotPresent() {
     return html` <div class="fill center-content">
-      <mwc-card style="width: 600px;">
+      <mwc-card style="width: 900px;">
         <div class="column" style="margin: 16px">
           <span class="title" style="margin-bottom: 16px;"
             >Holochain conductor not found</span
           >
           <span style="margin-bottom: 12px;"
-            >It seems that you don't have the compository executable running
-            with admin URL at ${ADMIN_URL}.
+            >It seems that you don't have the compository docker container
+            running with admin URL at <i>${ADMIN_URL}</i>.
           </span>
           <span style="margin-bottom: 12px;"
-            >Download
-            <a href="${EXECUTABLE_URL}">the compository executable</a>, run it
-            locally on your machine and refresh this page.
+            >Run the docker image with this command:
           </span>
-          <span>
-            We have binaries ready for linux and macos. On Windows, download the
-            linux executable and run it inside a
-            <a
-              href="https://www.omgubuntu.co.uk/how-to-install-wsl2-on-windows-10"
-              >WSL environment</a
-            >.
+          <pre>
+docker run -it --init -v $(pwd)/database:/database --network host guillemcordoba/compository:0.1
+</pre
+          >
+          <span style="margin-top: 12px;">
+            If you don't have docker installed and are on windows, install the
+            <a href="">docker desktop</a> and execute this file.
           </span>
         </div></mwc-card
       >
@@ -200,10 +202,14 @@ export class CompositoryApp extends (Scoped(
 
   render() {
     return html`
-      <compository-install-dna-dialog
-        id="install-dialog"
-      ></compository-install-dna-dialog>
       <membrane-context-provider id="context-provider">
+        <compository-install-dna-dialog
+          @dna-installed=${(e: CustomEvent) => {
+            this._selectedCellId = e.detail.cellId;
+            this._loading = false;
+          }}
+          id="install-dialog"
+        ></compository-install-dna-dialog>
         ${this.renderContent()}
       </membrane-context-provider>
     `;

@@ -15,7 +15,7 @@
     "format": "eslint --ext .ts,.html . --fix --ignore-path .gitignore",
     "test": "tsc && web-test-runner --coverage",
     "test:watch": "web-test-runner --watch",
-    "start:build": "npm run build && web-dev-server --root-dir dist --app-index index.html --open --compatibility none"
+    "gh-pages": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
     "@compository/blocky": "git+https://github.com/compository/blocky.git#ui-build",
