@@ -1,0 +1,41 @@
+import { Constructor, LitElement } from 'lit-element';
+import { CompositoryComposeZomes } from './compository-compose-zomes';
+import { AppWebsocket, AdminWebsocket, CellId } from '@holochain/conductor-api';
+import { Card } from 'scoped-material-components/mwc-card';
+import { MembraneContextProvider } from '@holochain-open-dev/membrane-context';
+import { CircularProgress } from 'scoped-material-components/mwc-circular-progress';
+import { CompositoryDisplayDna } from './compository-display-dna';
+import { CompositoryInstallDnaDialog, CompositoryService } from '@compository/lib';
+import { CompositoryInstalledCells } from './compository-installed-cells';
+import { TopAppBar } from 'scoped-material-components/mwc-top-app-bar';
+declare const CompositoryApp_base: Constructor<LitElement>;
+export declare class CompositoryApp extends CompositoryApp_base {
+    _selectedCellId: CellId | undefined;
+    _holochainPresent: boolean;
+    _loading: boolean;
+    _contextProvider: MembraneContextProvider;
+    _installDnaDialog: CompositoryInstallDnaDialog;
+    _appWebsocket: AppWebsocket;
+    _adminWebsocket: AdminWebsocket;
+    _compositoryCellId: CellId;
+    firstUpdated(): Promise<void>;
+    connectToHolochain(): Promise<void>;
+    get _compositoryService(): CompositoryService;
+    displayInstallDna(dnaHash: string): Promise<void>;
+    onCellInstalled(e: CustomEvent): void;
+    static get styles(): import("lit-element").CSSResult[];
+    renderHolochainNotPresent(): import("lit-element").TemplateResult;
+    renderContent(): import("lit-element").TemplateResult;
+    render(): import("lit-element").TemplateResult;
+    static get scopedElements(): {
+        'membrane-context-provider': typeof MembraneContextProvider;
+        'compository-compose-zomes': typeof CompositoryComposeZomes;
+        'compository-display-dna': typeof CompositoryDisplayDna;
+        'compository-install-dna-dialog': typeof CompositoryInstallDnaDialog;
+        'compository-installed-cells': typeof CompositoryInstalledCells;
+        'mwc-circular-progress': typeof CircularProgress;
+        'mwc-top-app-bar': typeof TopAppBar;
+        'mwc-card': typeof Card;
+    };
+}
+export {};
