@@ -13,8 +13,6 @@ import { Card } from 'scoped-material-components/mwc-card';
 import { MembraneContextProvider } from '@holochain-open-dev/membrane-context';
 import { serializeHash } from '@holochain-open-dev/common';
 import { CircularProgress } from 'scoped-material-components/mwc-circular-progress';
-import { List } from 'scoped-material-components/mwc-list';
-import { ListItem } from 'scoped-material-components/mwc-list-item';
 import { sharedStyles } from './sharedStyles';
 import { router } from '../router';
 import { CompositoryDisplayDna } from './compository-display-dna';
@@ -22,12 +20,11 @@ import {
   ADMIN_URL,
   APP_URL,
   COMPOSITORY_DNA_HASH,
-  EXECUTABLE_URL,
+  DOCKER_DESTKOP_URL,
 } from '../constants';
 import {
   CompositoryInstallDnaDialog,
   CompositoryService,
-  Dictionary,
   generateDnaFile,
 } from '@compository/lib';
 import { CompositoryInstalledCells } from './compository-installed-cells';
@@ -154,12 +151,13 @@ export class CompositoryApp extends (Scoped(
             >Run the docker image with this command:
           </span>
           <pre>
-docker run -it --init -v $(pwd)/database:/database --network host guillemcordoba/compository:0.1
-</pre
+          docker run -it --init -v $(pwd)/database:/database -p 22222:22222 -p 22223:22223 guillemcordoba/compository:0.2
+          </pre
           >
           <span style="margin-top: 12px;">
             If you don't have docker installed and are on windows, install the
-            <a href="">docker desktop</a> and execute this file.
+            <a href="${DOCKER_DESTKOP_URL}">docker desktop</a> and execute this
+            file.
           </span>
         </div></mwc-card
       >
