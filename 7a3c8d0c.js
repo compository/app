@@ -359,7 +359,7 @@ ${this.board&&!this.board.editing?O`
       </div>
     </mwc-card>`:O`<div class="fill center-content">
         <mwc-circular-progress indeterminate></mwc-circular-progress>
-      </div>`}static get styles(){return sa}static get scopedElements(){return{"mwc-list":zn,"mwc-list-item":Wr,"mwc-card":Ta,"mwc-circular-progress":Ai}}}i([Ae({type:Array})],NE.prototype,"_installedCellIds",void 0);class FE extends(Je(pe)){constructor(){super(...arguments),this._selectedCellId=void 0,this._holochainPresent=!1,this._loading=!0}async firstUpdated(){try{await this.connectToHolochain(),this._holochainPresent=!0,Xs.on({"/dna/:dna":async e=>{const t=await this._adminWebsocket.listCellIds();this._selectedCellId=t.find((t=>Xe(t[0])===e.dna)),this._selectedCellId||this.displayInstallDna(e.dna)},"*":async()=>{this._selectedCellId=void 0}}).resolve()}catch(e){this._holochainPresent=!1}finally{this._loading=!1}}async connectToHolochain(){this._adminWebsocket=await js.AdminWebsocket.connect("ws://localhost:1234"),this._appWebsocket=await js.AppWebsocket.connect("ws://localhost:8888");const e=await this._adminWebsocket.listCellIds();if(this._compositoryCellId=e.find((e=>Xe(e[0])===SE)),!this._compositoryCellId)throw new Error("Compository DNA not found");this._contextProvider.adminWebsocket=this._adminWebsocket,this._contextProvider.appWebsocket=this._appWebsocket,this._contextProvider.cellId=this._compositoryCellId}get _compositoryService(){return new TA(this._appWebsocket,this._compositoryCellId)}async displayInstallDna(e){this._loading=!0;try{const t=await this._compositoryService.getTemplateForDna(e),A=await Gr(this._compositoryService,t.dnaTemplate,t.properties,t.uuid);this._installDnaDialog.dnaFile=A,this._installDnaDialog.open()}catch(t){this.displayInstallDna(e)}}onCellInstalled(e){const t=e.detail.cellId;Xs.navigate(`/dna/${Xe(t[0])}`)}static get styles(){return[ge`
+      </div>`}static get styles(){return sa}static get scopedElements(){return{"mwc-list":zn,"mwc-list-item":Wr,"mwc-card":Ta,"mwc-circular-progress":Ai}}}i([Ae({type:Array})],NE.prototype,"_installedCellIds",void 0);class FE extends(Je(pe)){constructor(){super(...arguments),this._selectedCellId=void 0,this._holochainPresent=!1,this._loading=!0}async firstUpdated(){try{await this.connectToHolochain(),this._holochainPresent=!0,Xs.on({"/dna/:dna":async e=>{const t=await this._adminWebsocket.listCellIds();this._selectedCellId=t.find((t=>Xe(t[0])===e.dna)),this._selectedCellId||this.displayInstallDna(e.dna)},"*":async()=>{this._selectedCellId=void 0}}).resolve()}catch(e){this._holochainPresent=!1}finally{this._loading=!1}}async connectToHolochain(){this._adminWebsocket=await js.AdminWebsocket.connect("ws://localhost:22222"),this._appWebsocket=await js.AppWebsocket.connect("ws://localhost:22223");const e=await this._adminWebsocket.listCellIds();if(this._compositoryCellId=e.find((e=>Xe(e[0])===SE)),!this._compositoryCellId)throw new Error("Compository DNA not found");this._contextProvider.adminWebsocket=this._adminWebsocket,this._contextProvider.appWebsocket=this._appWebsocket,this._contextProvider.cellId=this._compositoryCellId}get _compositoryService(){return new TA(this._appWebsocket,this._compositoryCellId)}async displayInstallDna(e){this._loading=!0;try{const t=await this._compositoryService.getTemplateForDna(e),A=await Gr(this._compositoryService,t.dnaTemplate,t.properties,t.uuid);this._installDnaDialog.dnaFile=A,this._installDnaDialog.open()}catch(t){this.displayInstallDna(e)}}onCellInstalled(e){const t=e.detail.cellId;Xs.navigate(`/dna/${Xe(t[0])}`)}static get styles(){return[ge`
         :host {
           display: flex;
         }
@@ -371,18 +371,19 @@ ${this.board&&!this.board.editing?O`
           >
           <span style="margin-bottom: 12px;"
             >It seems that you don't have the compository docker container
-            running with admin URL at <i>${"ws://localhost:1234"}</i>.
+            running with admin URL at <i>${"ws://localhost:22222"}</i>.
           </span>
           <span style="margin-bottom: 12px;"
             >Run the docker image with this command:
           </span>
           <pre>
-docker run -it --init -v $(pwd)/database:/database --network host guillemcordoba/compository:0.1
-</pre
+          docker run -it --init -v $(pwd)/database:/database -p 22222:22222 -p 22223:22223 guillemcordoba/compository:0.2
+          </pre
           >
           <span style="margin-top: 12px;">
             If you don't have docker installed and are on windows, install the
-            <a href="">docker desktop</a> and execute this file.
+            <a href="${"https://www.docker.com/products/docker-desktop"}">docker desktop</a> and execute this
+            file.
           </span>
         </div></mwc-card
       >
