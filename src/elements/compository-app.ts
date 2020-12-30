@@ -138,7 +138,7 @@ export class CompositoryApp extends (Scoped(
 
   renderHolochainNotPresent() {
     return html` <div class="fill center-content">
-      <mwc-card style="width: 900px;">
+      <mwc-card style="width: 1200px;">
         <div class="column" style="margin: 16px">
           <span class="title" style="margin-bottom: 16px;"
             >Holochain conductor not found</span
