@@ -377,13 +377,13 @@ ${this.board&&!this.board.editing?O`
             >Run the docker image with this command:
           </span>
           <pre>
-          docker run -it --init -v $(pwd)/database:/database -p 22222:22222 -p 22223:22223 guillemcordoba/compository:0.2
+          docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 guillemcordoba/compository:0.2
           </pre
           >
           <span style="margin-top: 12px;">
             If you don't have docker installed and are on windows, install the
-            <a href="${"https://www.docker.com/products/docker-desktop"}">docker desktop</a> and execute this
-            file.
+            <a href="${"https://www.docker.com/products/docker-desktop"}">docker desktop</a> and execute
+            <a href="assets/compository-launch.bat">this file.</a>
           </span>
         </div></mwc-card
       >
