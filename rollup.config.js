@@ -4,6 +4,7 @@ import { createSpaConfig } from '@open-wc/building-rollup';
 import typescript from '@rollup/plugin-typescript';
 import commonjs from '@rollup/plugin-commonjs';
 import replace from '@rollup/plugin-replace';
+import copy from 'rollup-plugin-copy-assets';
 
 // use createBasicConfig to do regular JS to JS bundling
 // import { createBasicConfig } from '@open-wc/building-rollup';
@@ -35,10 +36,13 @@ export default merge(baseConfig, {
   // optionally set a HTML template manually
   // input: './app.js',
   plugins: [
+    copy({
+      assets: ['./assets'],
+    }),
     replace({
       'process.env.NODE_ENV': '"production"',
     }),
-    typescript({ experimentalDecorators: true, target: 'es2019' }),
+    typescript({ experimentalDecorators: true }),
     commonjs({
       include: [
         'node_modules/base64-js/**/*',
