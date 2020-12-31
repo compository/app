@@ -144,14 +144,19 @@ export class CompositoryApp extends (Scoped(
           </pre
           >
           <span>
-            You can clean up the persistent storage by removing the docker volume with
-            <pre>docker volume rm --force compository</pre>.
+            You can clean up the persistent storage by removing the docker
+            volume with
+            <pre>docker volume rm --force compository</pre>
+            .
           </span>
           <span style="margin-top: 12px;">
-            If you don't have docker installed and are on windows, install the
+            If you are not experienced with the terminal and are on windows,
+            install the
             <a href="${DOCKER_DESTKOP_URL}">docker desktop</a> and execute
             <a href="assets/compository-launch.bat">this file</a> (this will ask
-            for permission to access the file system).
+            for permission to access the file system). You can clean up the
+            persistent storage executing
+            <a href="assets/compository-cleanup.bat">this file</a>.
           </span>
         </div></mwc-card
       >
