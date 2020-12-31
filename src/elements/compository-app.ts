@@ -129,35 +129,36 @@ export class CompositoryApp extends (Scoped(
     return html` <div class="fill center-content">
       <mwc-card style="width: 1200px;">
         <div class="column" style="margin: 16px">
-          <span class="title" style="margin-bottom: 16px;"
+          <span class="title" style="margin-bottom: 24px;"
             >Holochain conductor not found</span
           >
-          <span style="margin-bottom: 12px;"
+          <span style="margin-bottom: 20px;"
             >It seems that you don't have the compository docker container
-            running with admin URL at <i>${ADMIN_URL}</i>.
+            running with admin URL at <i>${ADMIN_URL}</i>. Install it and refresh this page.
           </span>
-          <span style="margin-bottom: 12px;"
-            >Run the docker image with this command:
-          </span>
-          <pre>
-          docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 guillemcordoba/compository:0.2
-          </pre
-          >
-          <span>
-            You can clean up the persistent storage by removing the docker
-            volume with
-            <pre>docker volume rm --force compository</pre>
-            .
-          </span>
-          <span style="margin-top: 12px;">
-            If you are not experienced with the terminal and are on windows,
-            install the
+          <span style="margin-bottom: 20px;">
+            If you <strong>are not experienced with the terminal and are on windows</strong>,
+            install
             <a href="${DOCKER_DESTKOP_URL}">docker desktop</a> and execute
             <a href="assets/compository-launch.bat">this file</a> (this will ask
             for permission to access the file system). You can clean up the
             persistent storage executing
             <a href="assets/compository-cleanup.bat">this file</a>.
           </span>
+
+          <span style="margin-bottom: 12px;"
+            >To execute with a terminal, run the docker image with this command:
+          </span>
+          <pre style="margin: 4px 0;">
+docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 guillemcordoba/compository:0.2
+          </pre
+          >
+          <span>
+            You can clean up the persistent storage by removing the docker
+            volume with these commands:
+          </span>
+          <pre>docker rm $(docker ps -a -f status=exited -q)</pre>
+          <pre style="margin: 0;">docker volume rm --force compository</pre>
         </div></mwc-card
       >
     </div>`;
