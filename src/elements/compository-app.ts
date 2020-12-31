@@ -29,6 +29,7 @@ import {
 } from '@compository/lib';
 import { CompositoryInstalledCells } from './compository-installed-cells';
 import { TopAppBar } from 'scoped-material-components/mwc-top-app-bar';
+import { Button } from 'scoped-material-components/mwc-button';
 
 export class CompositoryApp extends (Scoped(
   LitElement
@@ -134,15 +135,17 @@ export class CompositoryApp extends (Scoped(
           >
           <span style="margin-bottom: 20px;"
             >It seems that you don't have the compository docker container
-            running with admin URL at <i>${ADMIN_URL}</i>. Install it and refresh this page.
+            running with admin URL at <i>${ADMIN_URL}</i>. Install it and
+            refresh this page.
           </span>
           <span style="margin-bottom: 20px;">
-            If you <strong>are not experienced with the terminal and are on windows</strong>,
-            install
-            <a href="${DOCKER_DESTKOP_URL}">docker desktop</a> and execute
-            <a href="assets/compository-launch.bat">this file</a> (this will ask
-            for permission to access the file system). You can clean up the
-            persistent storage executing
+            If you
+            <strong
+              >are not experienced with the terminal and are on windows</strong
+            >, install <a href="${DOCKER_DESTKOP_URL}">docker desktop</a> and
+            execute <a href="assets/compository-launch.bat">this file</a> (this
+            will ask for permission to access the file system). You can clean up
+            the persistent storage executing
             <a href="assets/compository-cleanup.bat">this file</a>.
           </span>
 
@@ -181,6 +184,14 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
       return html`
         <mwc-top-app-bar style="flex: 1; display: flex;">
           <div slot="title">Compository</div>
+
+          <mwc-button
+            slot="actionItems"
+            label="How to publish your zome"
+            style="--mdc-theme-primary: white;"
+            @click=${() =>
+              (location.href = 'https://github.com/compository/cli')}
+          ></mwc-button>
 
           <div class="fill row" style="width: 100vw; height: 100%; ">
             <compository-installed-cells
@@ -222,6 +233,7 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
       'compository-installed-cells': CompositoryInstalledCells,
       'mwc-circular-progress': CircularProgress,
       'mwc-top-app-bar': TopAppBar,
+      'mwc-button': Button,
       'mwc-card': Card,
     };
   }
