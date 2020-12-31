@@ -11,11 +11,11 @@ import { CompositoryComposeZomes } from './compository-compose-zomes';
 import { AppWebsocket, AdminWebsocket, CellId } from '@holochain/conductor-api';
 import { Card } from 'scoped-material-components/mwc-card';
 import { MembraneContextProvider } from '@holochain-open-dev/membrane-context';
+import { BlockyDnaBoard } from '@compository/blocky';
 import { serializeHash } from '@holochain-open-dev/common';
 import { CircularProgress } from 'scoped-material-components/mwc-circular-progress';
 import { sharedStyles } from './sharedStyles';
 import { router } from '../router';
-import { CompositoryDisplayDna } from './compository-display-dna';
 import {
   ADMIN_URL,
   APP_URL,
@@ -125,17 +125,6 @@ export class CompositoryApp extends (Scoped(
     router.navigate(`/dna/${serializeHash(cellId[0])}`);
   }
 
-  static get styles() {
-    return [
-      css`
-        :host {
-          display: flex;
-        }
-      `,
-      sharedStyles,
-    ];
-  }
-
   renderHolochainNotPresent() {
     return html` <div class="fill center-content">
       <mwc-card style="width: 1200px;">
@@ -154,10 +143,15 @@ export class CompositoryApp extends (Scoped(
           docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 guillemcordoba/compository:0.2
           </pre
           >
+          <span>
+            You can clean up the persistent storage by removing the docker volume with
+            <pre>docker volume rm --force compository</pre>.
+          </span>
           <span style="margin-top: 12px;">
             If you don't have docker installed and are on windows, install the
             <a href="${DOCKER_DESTKOP_URL}">docker desktop</a> and execute
-            <a href="assets/compository-launch.bat">this file.</a>
+            <a href="assets/compository-launch.bat">this file</a> (this will ask
+            for permission to access the file system).
           </span>
         </div></mwc-card
       >
@@ -171,31 +165,31 @@ export class CompositoryApp extends (Scoped(
       </div>`;
     if (!this._holochainPresent) return this.renderHolochainNotPresent();
     if (this._selectedCellId)
-      return html`<compository-display-dna
+      return html`<blocky-dna-board
         style="flex: 1;"
         .cellIdToDisplay=${this._selectedCellId}
-        .compositoryCellId=${this._contextProvider.cellId}
-      ></compository-display-dna>`;
+        .compositoryCellId=${this._compositoryCellId}
+        @navigate-back=${() => router.navigate('/')}
+      ></blocky-dna-board>`;
     else
       return html`
-    <mwc-top-app-bar style="flex: 1; display: flex;">
-    <div slot="title">Compository</div>
+        <mwc-top-app-bar style="flex: 1; display: flex;">
+          <div slot="title">Compository</div>
 
-  <div class="fill row" style="width: 100vw; height: 100%; ">
-      <compository-installed-cells class="fill"
-      style="margin: 32px; margin-right: 0;"
-      ></compository-installed-cells>
-      
-        <compository-compose-zomes
-        style="margin: 32px;"
-          class="fill"
-          @dna-installed=${(e: CustomEvent) => this.onCellInstalled(e)}
-        ></compository-compose-zomes>
-      </mwc-card>
-  
-  </div>
-  </mwc-top-app-bar>
-`;
+          <div class="fill row" style="width: 100vw; height: 100%; ">
+            <compository-installed-cells
+              class="fill"
+              style="margin: 32px; margin-right: 0;"
+            ></compository-installed-cells>
+
+            <compository-compose-zomes
+              style="margin: 32px;"
+              class="fill"
+              @dna-installed=${(e: CustomEvent) => this.onCellInstalled(e)}
+            ></compository-compose-zomes>
+          </div>
+        </mwc-top-app-bar>
+      `;
   }
 
   render() {
@@ -217,12 +211,23 @@ export class CompositoryApp extends (Scoped(
     return {
       'membrane-context-provider': MembraneContextProvider,
       'compository-compose-zomes': CompositoryComposeZomes,
-      'compository-display-dna': CompositoryDisplayDna,
+      'blocky-dna-board': BlockyDnaBoard,
       'compository-install-dna-dialog': CompositoryInstallDnaDialog,
       'compository-installed-cells': CompositoryInstalledCells,
       'mwc-circular-progress': CircularProgress,
       'mwc-top-app-bar': TopAppBar,
       'mwc-card': Card,
     };
+  }
+
+  static get styles() {
+    return [
+      css`
+        :host {
+          display: flex;
+        }
+      `,
+      sharedStyles,
+    ];
   }
 }
