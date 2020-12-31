@@ -324,15 +324,17 @@ var e=function(t,A){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Arr
           >
           <span style="margin-bottom: 20px;"
             >It seems that you don't have the compository docker container
-            running with admin URL at <i>${"ws://localhost:22222"}</i>. Install it and refresh this page.
+            running with admin URL at <i>${"ws://localhost:22222"}</i>. Install it and
+            refresh this page.
           </span>
           <span style="margin-bottom: 20px;">
-            If you <strong>are not experienced with the terminal and are on windows</strong>,
-            install
-            <a href="${"https://www.docker.com/products/docker-desktop"}">docker desktop</a> and execute
-            <a href="assets/compository-launch.bat">this file</a> (this will ask
-            for permission to access the file system). You can clean up the
-            persistent storage executing
+            If you
+            <strong
+              >are not experienced with the terminal and are on windows</strong
+            >, install <a href="${"https://www.docker.com/products/docker-desktop"}">docker desktop</a> and
+            execute <a href="assets/compository-launch.bat">this file</a> (this
+            will ask for permission to access the file system). You can clean up
+            the persistent storage executing
             <a href="assets/compository-cleanup.bat">this file</a>.
           </span>
 
@@ -362,6 +364,13 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
         <mwc-top-app-bar style="flex: 1; display: flex;">
           <div slot="title">Compository</div>
 
+          <mwc-button
+            slot="actionItems"
+            label="How to publish your zome"
+            style="--mdc-theme-primary: white;"
+            @click=${()=>location.href="https://github.com/compository/cli"}
+          ></mwc-button>
+
           <div class="fill row" style="width: 100vw; height: 100%; ">
             <compository-installed-cells
               class="fill"
@@ -383,7 +392,7 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
         ></compository-install-dna-dialog>
         ${this.renderContent()}
       </membrane-context-provider>
-    `}static get scopedElements(){return{"membrane-context-provider":lt,"compository-compose-zomes":Ya,"blocky-dna-board":ME,"compository-install-dna-dialog":lr,"compository-installed-cells":UE,"mwc-circular-progress":Ai,"mwc-top-app-bar":lc,"mwc-card":Ja}}static get styles(){return[ge`
+    `}static get scopedElements(){return{"membrane-context-provider":lt,"compository-compose-zomes":Ya,"blocky-dna-board":ME,"compository-install-dna-dialog":lr,"compository-installed-cells":UE,"mwc-circular-progress":Ai,"mwc-top-app-bar":lc,"mwc-button":co,"mwc-card":Ja}}static get styles(){return[ge`
         :host {
           display: flex;
         }
