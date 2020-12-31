@@ -3,8 +3,8 @@ import { CompositoryComposeZomes } from './compository-compose-zomes';
 import { AppWebsocket, AdminWebsocket, CellId } from '@holochain/conductor-api';
 import { Card } from 'scoped-material-components/mwc-card';
 import { MembraneContextProvider } from '@holochain-open-dev/membrane-context';
+import { BlockyDnaBoard } from '@compository/blocky';
 import { CircularProgress } from 'scoped-material-components/mwc-circular-progress';
-import { CompositoryDisplayDna } from './compository-display-dna';
 import { CompositoryInstallDnaDialog, CompositoryService } from '@compository/lib';
 import { CompositoryInstalledCells } from './compository-installed-cells';
 import { TopAppBar } from 'scoped-material-components/mwc-top-app-bar';
@@ -23,19 +23,19 @@ export declare class CompositoryApp extends CompositoryApp_base {
     get _compositoryService(): CompositoryService;
     displayInstallDna(dnaHash: string): Promise<void>;
     onCellInstalled(e: CustomEvent): void;
-    static get styles(): import("lit-element").CSSResult[];
     renderHolochainNotPresent(): import("lit-element").TemplateResult;
     renderContent(): import("lit-element").TemplateResult;
     render(): import("lit-element").TemplateResult;
     static get scopedElements(): {
         'membrane-context-provider': typeof MembraneContextProvider;
         'compository-compose-zomes': typeof CompositoryComposeZomes;
-        'compository-display-dna': typeof CompositoryDisplayDna;
+        'blocky-dna-board': typeof BlockyDnaBoard;
         'compository-install-dna-dialog': typeof CompositoryInstallDnaDialog;
         'compository-installed-cells': typeof CompositoryInstalledCells;
         'mwc-circular-progress': typeof CircularProgress;
         'mwc-top-app-bar': typeof TopAppBar;
         'mwc-card': typeof Card;
     };
+    static get styles(): import("lit-element").CSSResult[];
 }
 export {};
