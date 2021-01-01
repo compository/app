@@ -339,8 +339,28 @@ var e=function(t,A){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Arr
             </div></div
         ></mwc-card>
       </div>
-    `}renderHolochainNotPresent(){return O` <div class="fill center-content">
-      <mwc-card style="width: 1200px;">
+    `}renderHolochainNotPresent(){return O` <div class="column fill center-content">
+      <mwc-card style="width: 900px; margin-bottom: 48px;">
+        <div class="column" style="margin: 16px">
+          <span class="title" style="margin-bottom: 24px; font-size: 32px;"
+            >Compository</span
+          >
+          <span style="margin-bottom: 16px"
+            >Play with holochain in a new way, by generating new DNAs on the fly
+            and composing UIs to suit your unique purposes.</span
+          >
+          <span style="margin-bottom: 16px"
+            >Please note! This is an experiment, not ready to use in any kind of
+            production environment.</span
+          >
+          <span
+            >Try it out! What would be awesome to add to the compository? Are
+            you excited to play with this in some way? Tell us in the
+            <a href="https://forum.holochain.org">Holochain Forum</a>.</span
+          >
+        </div>
+      </mwc-card>
+      <mwc-card style="width: 900px;">
         <div class="column" style="margin: 16px">
           <span class="title" style="margin-bottom: 24px;"
             >Holochain conductor not found</span
