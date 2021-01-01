@@ -316,7 +316,30 @@ var e=function(t,A){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Arr
       </div>
     </mwc-card>`:O`<div class="fill center-content">
         <mwc-circular-progress indeterminate></mwc-circular-progress>
-      </div>`}static get styles(){return sa}static get scopedElements(){return{"mwc-list":zn,"mwc-list-item":Wr,"mwc-card":Ja,"mwc-circular-progress":Ai}}}i([Ae({type:Array})],UE.prototype,"_installedCellIds",void 0);class TE extends(Te(pe)){constructor(){super(...arguments),this._selectedCellId=void 0,this._holochainPresent=!1,this._loading=!0}async firstUpdated(){try{await this.connectToHolochain(),this._holochainPresent=!0,GE.on({"/dna/:dna":async e=>{const t=await this._adminWebsocket.listCellIds();this._selectedCellId=t.find((t=>Xe(t[0])===e.dna)),this._selectedCellId||this.displayInstallDna(e.dna)},"*":async()=>{this._selectedCellId=void 0}}).resolve()}catch(e){this._holochainPresent=!1}finally{this._loading=!1}}async connectToHolochain(){this._adminWebsocket=await js.AdminWebsocket.connect("ws://localhost:22222"),this._appWebsocket=await js.AppWebsocket.connect("ws://localhost:22223");const e=await this._adminWebsocket.listCellIds();if(this._compositoryCellId=e.find((e=>Xe(e[0])===LE)),!this._compositoryCellId)throw new Error("Compository DNA not found");this._contextProvider.adminWebsocket=this._adminWebsocket,this._contextProvider.appWebsocket=this._appWebsocket,this._contextProvider.cellId=this._compositoryCellId}get _compositoryService(){return new JA(this._appWebsocket,this._compositoryCellId)}async displayInstallDna(e){this._loading=!0;try{const t=await this._compositoryService.getTemplateForDna(e),A=await Gr(this._compositoryService,t.dnaTemplate,t.properties,t.uuid);this._installDnaDialog.dnaFile=A,this._installDnaDialog.open()}catch(t){this.displayInstallDna(e)}}onCellInstalled(e){const t=e.detail.cellId;GE.navigate(`/dna/${Xe(t[0])}`)}renderHolochainNotPresent(){return O` <div class="fill center-content">
+      </div>`}static get styles(){return sa}static get scopedElements(){return{"mwc-list":zn,"mwc-list-item":Wr,"mwc-card":Ja,"mwc-circular-progress":Ai}}}i([Ae({type:Array})],UE.prototype,"_installedCellIds",void 0);class TE extends(Te(pe)){constructor(){super(...arguments),this._selectedCellId=void 0,this._holochainPresent=!1,this._loading=!0,this._nonexistingDna=void 0}async firstUpdated(){try{await this.connectToHolochain(),this._holochainPresent=!0,GE.on({"/dna/:dna":async e=>{const t=await this._adminWebsocket.listCellIds();this._selectedCellId=t.find((t=>Xe(t[0])===e.dna)),this._selectedCellId||this.displayInstallDna(e.dna)},"*":async()=>{this._selectedCellId=void 0}}).resolve()}catch(e){this._holochainPresent=!1}finally{this._loading=!1}}async connectToHolochain(){this._adminWebsocket=await js.AdminWebsocket.connect("ws://localhost:22222"),this._appWebsocket=await js.AppWebsocket.connect("ws://localhost:22223");const e=await this._adminWebsocket.listCellIds();if(this._compositoryCellId=e.find((e=>Xe(e[0])===LE)),!this._compositoryCellId)throw new Error("Compository DNA not found");this._contextProvider.adminWebsocket=this._adminWebsocket,this._contextProvider.appWebsocket=this._appWebsocket,this._contextProvider.cellId=this._compositoryCellId}get _compositoryService(){return new JA(this._appWebsocket,this._compositoryCellId)}async displayInstallDna(e,t=3){if(this._loading=!0,0===t)return this._nonexistingDna=e,void(this._loading=!1);try{const t=await this._compositoryService.getTemplateForDna(e),A=await Gr(this._compositoryService,t.dnaTemplate,t.properties,t.uuid);this._installDnaDialog.dnaFile=A,this._installDnaDialog.open()}catch(A){this.displayInstallDna(e,t-1)}}onCellInstalled(e){const t=e.detail.cellId;GE.navigate(`/dna/${Xe(t[0])}`)}renderNonexistingDna(){return O`
+      <div class="fill center-content">
+        <mwc-card style="width: 800px;">
+          <div class="column" style="margin: 16px">
+            <span class="title" style="margin-bottom: 24px;">
+              DNA not found
+            </span>
+            <span style="margin-bottom: 16px;">
+              The DNA with hash "${this._nonexistingDna}" doesn't seem to exist
+              in the compository.
+            </span>
+            <span style="margin-bottom: 16px;">
+              Make sure the DNA hash in the URL is correct and try again.
+            </span>
+
+            <div class="column" style="align-items: flex-end">
+              <mwc-button
+                label="Go back"
+                @click=${()=>{this._nonexistingDna=void 0,GE.navigate("/")}}
+              ></mwc-button>
+            </div></div
+        ></mwc-card>
+      </div>
+    `}renderHolochainNotPresent(){return O` <div class="fill center-content">
       <mwc-card style="width: 1200px;">
         <div class="column" style="margin: 16px">
           <span class="title" style="margin-bottom: 24px;"
@@ -360,7 +383,7 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
         .cellIdToDisplay=${this._selectedCellId}
         .compositoryCellId=${this._compositoryCellId}
         @navigate-back=${()=>GE.navigate("/")}
-      ></blocky-dna-board>`:O`
+      ></blocky-dna-board>`:this._nonexistingDna?this.renderNonexistingDna():O`
         <mwc-top-app-bar style="flex: 1; display: flex;">
           <div slot="title">Compository</div>
 
@@ -396,4 +419,4 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
         :host {
           display: flex;
         }
-      `,sa]}}i([Ae({type:Array})],TE.prototype,"_selectedCellId",void 0),i([Ae({type:Array})],TE.prototype,"_holochainPresent",void 0),i([Ae({type:Array})],TE.prototype,"_loading",void 0),i([oe("#context-provider")],TE.prototype,"_contextProvider",void 0),i([oe("#install-dialog")],TE.prototype,"_installDnaDialog",void 0),customElements.define("compository-app",TE);
+      `,sa]}}i([Ae({type:Array})],TE.prototype,"_selectedCellId",void 0),i([Ae({type:Array})],TE.prototype,"_holochainPresent",void 0),i([Ae({type:Array})],TE.prototype,"_loading",void 0),i([oe("#context-provider")],TE.prototype,"_contextProvider",void 0),i([oe("#install-dialog")],TE.prototype,"_installDnaDialog",void 0),i([Ae({type:String})],TE.prototype,"_nonexistingDna",void 0),customElements.define("compository-app",TE);

@@ -16,14 +16,16 @@ export declare class CompositoryApp extends CompositoryApp_base {
     _loading: boolean;
     _contextProvider: MembraneContextProvider;
     _installDnaDialog: CompositoryInstallDnaDialog;
+    _nonexistingDna: string | undefined;
     _appWebsocket: AppWebsocket;
     _adminWebsocket: AdminWebsocket;
     _compositoryCellId: CellId;
     firstUpdated(): Promise<void>;
     connectToHolochain(): Promise<void>;
     get _compositoryService(): CompositoryService;
-    displayInstallDna(dnaHash: string): Promise<void>;
+    displayInstallDna(dnaHash: string, retriesLeft?: number): Promise<void>;
     onCellInstalled(e: CustomEvent): void;
+    renderNonexistingDna(): import("lit-element").TemplateResult;
     renderHolochainNotPresent(): import("lit-element").TemplateResult;
     renderContent(): import("lit-element").TemplateResult;
     render(): import("lit-element").TemplateResult;
