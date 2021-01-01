@@ -46,6 +46,9 @@ export class CompositoryApp extends (Scoped(
   @query('#install-dialog')
   _installDnaDialog!: CompositoryInstallDnaDialog;
 
+  @property({ type: String })
+  _nonexistingDna: string | undefined = undefined;
+
   _appWebsocket!: AppWebsocket;
   _adminWebsocket!: AdminWebsocket;
   _compositoryCellId!: CellId;
@@ -100,8 +103,15 @@ export class CompositoryApp extends (Scoped(
     return new CompositoryService(this._appWebsocket, this._compositoryCellId);
   }
 
-  async displayInstallDna(dnaHash: string) {
+  async displayInstallDna(dnaHash: string, retriesLeft: number = 3) {
     this._loading = true;
+
+    if (retriesLeft === 0) {
+      this._nonexistingDna = dnaHash;
+      this._loading = false;
+      return;
+    }
+
     try {
       const template = await this._compositoryService.getTemplateForDna(
         dnaHash
@@ -117,13 +127,43 @@ export class CompositoryApp extends (Scoped(
       this._installDnaDialog.dnaFile = dnaFile;
       this._installDnaDialog.open();
     } catch (e) {
-      this.displayInstallDna(dnaHash);
+      this.displayInstallDna(dnaHash, retriesLeft - 1);
     }
   }
 
   onCellInstalled(e: CustomEvent) {
     const cellId = e.detail.cellId;
     router.navigate(`/dna/${serializeHash(cellId[0])}`);
+  }
+
+  renderNonexistingDna() {
+    return html`
+      <div class="fill center-content">
+        <mwc-card style="width: 800px;">
+          <div class="column" style="margin: 16px">
+            <span class="title" style="margin-bottom: 24px;">
+              DNA not found
+            </span>
+            <span style="margin-bottom: 16px;">
+              The DNA with hash "${this._nonexistingDna}" doesn't seem to exist
+              in the compository.
+            </span>
+            <span style="margin-bottom: 16px;">
+              Make sure the DNA hash in the URL is correct and try again.
+            </span>
+
+            <div class="column" style="align-items: flex-end">
+              <mwc-button
+                label="Go back"
+                @click=${() => {
+                  this._nonexistingDna = undefined;
+                  router.navigate('/');
+                }}
+              ></mwc-button>
+            </div></div
+        ></mwc-card>
+      </div>
+    `;
   }
 
   renderHolochainNotPresent() {
@@ -180,6 +220,7 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
         .compositoryCellId=${this._compositoryCellId}
         @navigate-back=${() => router.navigate('/')}
       ></blocky-dna-board>`;
+    else if (this._nonexistingDna) return this.renderNonexistingDna();
     else
       return html`
         <mwc-top-app-bar style="flex: 1; display: flex;">
