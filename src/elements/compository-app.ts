@@ -179,12 +179,14 @@ export class CompositoryApp extends (Scoped(
           >
           <span style="margin-bottom: 16px"
             >Please note! This is an experiment, not ready to use in any kind of
-            production environment.</span
-          >
+            production environment. This web app and the compository DNA will
+            suffer a lot of changes, so expect rapid iteration and things
+            breaking.
+          </span>
           <span
             >Try it out! What would be awesome to add to the compository? Are
             you excited to play with this in some way? Tell us in the
-            <a href="https://forum.holochain.org">Holochain Forum</a>.</span
+            <a href="https://forum.holochain.org/t/introducing-the-compository/4486">Holochain Forum</a>.</span
           >
         </div>
       </mwc-card>
