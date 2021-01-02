@@ -184,15 +184,17 @@ export class CompositoryApp extends (Scoped(
             breaking.
           </span>
           <span
-            >Try it out! What would be awesome to add to the compository? Are
+            >Try it out by following the instructions below! What would be awesome to add to the compository? Are
             you excited to play with this in some way? Tell us in the
-            <a href="https://forum.holochain.org/t/introducing-the-compository/4486">Holochain Forum</a>.</span
+            <a
+              href="https://forum.holochain.org/t/introducing-the-compository/4486"
+              >Holochain Forum</a
+            >.</span
           >
-        </div>
-      </mwc-card>
-      <mwc-card style="width: 900px;">
-        <div class="column" style="margin: 16px">
-          <span class="title" style="margin-bottom: 24px;"
+
+          <hr>
+
+          <span style="font-size: 24px; margin-bottom: 16px; margin-top: 24px;"
             >Holochain conductor not found</span
           >
           <span style="margin-bottom: 20px;"
@@ -200,20 +202,35 @@ export class CompositoryApp extends (Scoped(
             running with admin URL at <i>${ADMIN_URL}</i>. Install it and
             refresh this page.
           </span>
+          <span style="font-size: 20px; margin-top: 16px; margin-bottom: 8px;"
+            >Running Without a Terminal</span
+          >
+          <ul>
+            <li>
+              First, download and install
+              <a href="${DOCKER_DESTKOP_URL}">docker desktop</a>.
+            </li>
+            <li>
+              On Windows, download and execute
+              <a href="assets/compository-launch.bat">this file</a>. You can
+              clean up the persistent storage executing
+              <a href="assets/compository-cleanup.bat">this file</a>.
+            </li>
+            <li>
+              On MacOs, download and extract <a href="assets/compository-commands.zip">this zip</a> and execute
+             the "compository-launch.command" file</a>. You can
+              clean up the persistent storage executing the "compository-cleanup.command" file.
+            </li>
+          </ul>
+
+          <span style="font-size: 20px; margin-bottom: 16px; margin-top: 16px;"
+            >Running Inside a Terminal</span
+          >
+
           <span style="margin-bottom: 20px;">
-            If you
-            <strong
-              >are not experienced with the terminal and are on windows</strong
-            >, install <a href="${DOCKER_DESTKOP_URL}">docker desktop</a> and
-            execute <a href="assets/compository-launch.bat">this file</a> (this
-            will ask for permission to access the file system). You can clean up
-            the persistent storage executing
-            <a href="assets/compository-cleanup.bat">this file</a>.
+            Assuming you have docker already installed, run this:
           </span>
 
-          <span style="margin-bottom: 12px;"
-            >To execute with a terminal, run the docker image with this command:
-          </span>
           <pre style="margin: 4px 0;">
 docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 guillemcordoba/compository:0.2
           </pre
@@ -224,8 +241,8 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
           </span>
           <pre>docker rm $(docker ps -a -f status=exited -q)</pre>
           <pre style="margin: 0;">docker volume rm --force compository</pre>
-        </div></mwc-card
-      >
+        </div>
+      </mwc-card>
     </div>`;
   }
 
@@ -306,6 +323,9 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
       css`
         :host {
           display: flex;
+        }
+        li {
+          margin-bottom: 8px;
         }
       `,
       sharedStyles,
