@@ -71,7 +71,6 @@ var e=function(t,A){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Arr
 
   .title {
     font-size: 20px;
-    font-weight: bold;
   }
 
   .fill {
