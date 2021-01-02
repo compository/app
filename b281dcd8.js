@@ -356,15 +356,17 @@ var e=function(t,A){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Arr
             breaking.
           </span>
           <span
-            >Try it out! What would be awesome to add to the compository? Are
+            >Try it out by following the instructions below! What would be awesome to add to the compository? Are
             you excited to play with this in some way? Tell us in the
-            <a href="https://forum.holochain.org/t/introducing-the-compository/4486">Holochain Forum</a>.</span
+            <a
+              href="https://forum.holochain.org/t/introducing-the-compository/4486"
+              >Holochain Forum</a
+            >.</span
           >
-        </div>
-      </mwc-card>
-      <mwc-card style="width: 900px;">
-        <div class="column" style="margin: 16px">
-          <span class="title" style="margin-bottom: 24px;"
+
+          <hr>
+
+          <span style="font-size: 24px; margin-bottom: 16px; margin-top: 24px;"
             >Holochain conductor not found</span
           >
           <span style="margin-bottom: 20px;"
@@ -372,20 +374,35 @@ var e=function(t,A){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Arr
             running with admin URL at <i>${"ws://localhost:22222"}</i>. Install it and
             refresh this page.
           </span>
+          <span style="font-size: 20px; margin-top: 16px; margin-bottom: 8px;"
+            >Running Without a Terminal</span
+          >
+          <ul>
+            <li>
+              First, download and install
+              <a href="${"https://www.docker.com/products/docker-desktop"}">docker desktop</a>.
+            </li>
+            <li>
+              On Windows, download and execute
+              <a href="assets/compository-launch.bat">this file</a>. You can
+              clean up the persistent storage executing
+              <a href="assets/compository-cleanup.bat">this file</a>.
+            </li>
+            <li>
+              On MacOs, download and extract <a href="assets/compository-commands.zip">this zip</a> and execute
+             the "compository-launch.command" file</a>. You can
+              clean up the persistent storage executing the "compository-cleanup.command" file.
+            </li>
+          </ul>
+
+          <span style="font-size: 20px; margin-bottom: 16px; margin-top: 16px;"
+            >Running Inside a Terminal</span
+          >
+
           <span style="margin-bottom: 20px;">
-            If you
-            <strong
-              >are not experienced with the terminal and are on windows</strong
-            >, install <a href="${"https://www.docker.com/products/docker-desktop"}">docker desktop</a> and
-            execute <a href="assets/compository-launch.bat">this file</a> (this
-            will ask for permission to access the file system). You can clean up
-            the persistent storage executing
-            <a href="assets/compository-cleanup.bat">this file</a>.
+            Assuming you have docker already installed, run this:
           </span>
 
-          <span style="margin-bottom: 12px;"
-            >To execute with a terminal, run the docker image with this command:
-          </span>
           <pre style="margin: 4px 0;">
 docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 guillemcordoba/compository:0.2
           </pre
@@ -396,8 +413,8 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
           </span>
           <pre>docker rm $(docker ps -a -f status=exited -q)</pre>
           <pre style="margin: 0;">docker volume rm --force compository</pre>
-        </div></mwc-card
-      >
+        </div>
+      </mwc-card>
     </div>`}renderContent(){return this._loading?O`<div class="fill center-content">
         <mwc-circular-progress indeterminate></mwc-circular-progress>
       </div>`:this._holochainPresent?this._selectedCellId?O`<blocky-dna-board
@@ -440,5 +457,8 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
     `}static get scopedElements(){return{"membrane-context-provider":lt,"compository-compose-zomes":Ya,"blocky-dna-board":ME,"compository-install-dna-dialog":lr,"compository-installed-cells":UE,"mwc-circular-progress":Ai,"mwc-top-app-bar":lc,"mwc-button":co,"mwc-card":Ja}}static get styles(){return[ge`
         :host {
           display: flex;
+        }
+        li {
+          margin-bottom: 8px;
         }
       `,sa]}}i([Ae({type:Array})],TE.prototype,"_selectedCellId",void 0),i([Ae({type:Array})],TE.prototype,"_holochainPresent",void 0),i([Ae({type:Array})],TE.prototype,"_loading",void 0),i([oe("#context-provider")],TE.prototype,"_contextProvider",void 0),i([oe("#install-dialog")],TE.prototype,"_installDnaDialog",void 0),i([Ae({type:String})],TE.prototype,"_nonexistingDna",void 0),customElements.define("compository-app",TE);
