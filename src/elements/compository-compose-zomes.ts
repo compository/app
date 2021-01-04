@@ -26,6 +26,7 @@ import { AppWebsocket, CellId } from '@holochain/conductor-api';
 import { TextField } from 'scoped-material-components/mwc-textfield';
 import { Hashed, serializeHash } from '@holochain-open-dev/common';
 import { Card } from 'scoped-material-components/mwc-card';
+import { Dictionary } from '@holochain-open-dev/common/core-types';
 
 export class CompositoryComposeZomes extends membraneContext(
   Scoped(LitElement) as Constructor<LitElement>
@@ -63,7 +64,15 @@ export class CompositoryComposeZomes extends membraneContext(
   }
 
   async loadZomes() {
-    this.zomeDefs = await this._compositoryService.getAllZomeDefs();
+    // TODO: fix this
+    const allZomeDefs = await this._compositoryService.getAllZomeDefs();
+
+    const zomeDefsByName: Dictionary<Hashed<ZomeDef>> = {};
+    for (const zomeDef of allZomeDefs) {
+      zomeDefsByName[zomeDef.content.name] = zomeDef;
+    }
+
+    this.zomeDefs = Object.values(zomeDefsByName);
   }
 
   async createDnaTemplate() {
