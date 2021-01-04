@@ -18,6 +18,7 @@ import {
 import { List } from 'scoped-material-components/mwc-list';
 import { Button } from 'scoped-material-components/mwc-button';
 import { CheckListItem } from 'scoped-material-components/mwc-check-list-item';
+import { Snackbar } from 'scoped-material-components/mwc-snackbar';
 import { CircularProgress } from 'scoped-material-components/mwc-circular-progress';
 import { membraneContext } from '@holochain-open-dev/membrane-context';
 import { sharedStyles } from './sharedStyles';
@@ -78,30 +79,42 @@ export class CompositoryComposeZomes extends membraneContext(
       name: this._templateName as string,
       zome_defs: zomeDefReferences,
     };
+    try {
+      const dnaTemplateHash = await this._compositoryService.publishDnaTemplate(
+        dnaTemplate
+      );
 
-    const dnaTemplateHash = await this._compositoryService.publishDnaTemplate(
-      dnaTemplate
-    );
+      const uuid = '';
+      const properties: any[] = [];
 
-    const uuid = '';
-    const properties: any[] = [];
+      const dnaFile = await generateDnaFile(
+        this._compositoryService,
+        dnaTemplate,
+        uuid,
+        properties
+      );
 
-    const dnaFile = await generateDnaFile(
-      this._compositoryService,
-      dnaTemplate,
-      uuid,
-      properties
-    );
+      await this._compositoryService.publishInstantiatedDna({
+        dna_template_hash: dnaTemplateHash,
+        instantiated_dna_hash: serializeHash(new Uint8Array(dnaFile.dna.hash)),
+        properties,
+        uuid,
+      });
 
-    await this._compositoryService.publishInstantiatedDna({
-      dna_template_hash: dnaTemplateHash,
-      instantiated_dna_hash: serializeHash(new Uint8Array(dnaFile.dna.hash)),
-      properties,
-      uuid,
-    });
+      this._installDnaDialog.dnaFile = dnaFile;
+      this._installDnaDialog.open();
+    } catch (e) {
+      (this.shadowRoot?.getElementById('error-snackbar') as Snackbar).show();
+    }
+  }
 
-    this._installDnaDialog.dnaFile = dnaFile;
-    this._installDnaDialog.open();
+  renderErrorSnackbar() {
+    return html`
+      <mwc-snackbar
+        id="error-snackbar"
+        labelText="Couldn't generate the DNA due to gossip inconsistencies. Please try again in a few minutes."
+      ></mwc-snackbar>
+    `;
   }
 
   render() {
@@ -110,7 +123,8 @@ export class CompositoryComposeZomes extends membraneContext(
         <mwc-circular-progress indeterminate></mwc-circular-progress>
       </div>`;
 
-    return html` <compository-install-dna-dialog
+    return html` ${this.renderErrorSnackbar()}
+      <compository-install-dna-dialog
         id="install-dna-dialog"
       ></compository-install-dna-dialog>
       <mwc-card class="fill">
@@ -163,6 +177,7 @@ export class CompositoryComposeZomes extends membraneContext(
       'mwc-textfield': TextField,
       'compository-install-dna-dialog': CompositoryInstallDnaDialog,
       'mwc-card': Card,
+      'mwc-snackbar': Snackbar,
     };
   }
 }
