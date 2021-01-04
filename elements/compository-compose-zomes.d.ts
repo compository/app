@@ -3,6 +3,7 @@ import { ZomeDef, CompositoryService, CompositoryInstallDnaDialog } from '@compo
 import { List } from 'scoped-material-components/mwc-list';
 import { Button } from 'scoped-material-components/mwc-button';
 import { CheckListItem } from 'scoped-material-components/mwc-check-list-item';
+import { Snackbar } from 'scoped-material-components/mwc-snackbar';
 import { CircularProgress } from 'scoped-material-components/mwc-circular-progress';
 import { TextField } from 'scoped-material-components/mwc-textfield';
 import { Hashed } from '@holochain-open-dev/common';
@@ -20,6 +21,7 @@ export declare class CompositoryComposeZomes extends CompositoryComposeZomes_bas
     firstUpdated(): void;
     loadZomes(): Promise<void>;
     createDnaTemplate(): Promise<void>;
+    renderErrorSnackbar(): import("lit-element").TemplateResult;
     render(): import("lit-element").TemplateResult;
     static get scopedElements(): {
         'mwc-list': typeof List;
@@ -29,6 +31,7 @@ export declare class CompositoryComposeZomes extends CompositoryComposeZomes_bas
         'mwc-textfield': typeof TextField;
         'compository-install-dna-dialog': typeof CompositoryInstallDnaDialog;
         'mwc-card': typeof Card;
+        'mwc-snackbar': typeof Snackbar;
     };
 }
 export {};
