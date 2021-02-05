@@ -86,11 +86,11 @@ export class CompositoryInstalledCells extends membraneContext(
           ? html`
               <div class="fill center-content">
                 <div style="margin: 32px; text-align: center;" class="column">
-                  <span style="margin-bottom: 16px;"
+                  <span style="margin-bottom: 16px;" class="placeholder"
                     >You don't have any generated DNAs installed yet.</span
                   >
-                  <span
-                    >Ask a friend for a DNA url, or compose some zomes to
+                  <span class="placeholder"
+                    >Discover one of the DNAs available below, or compose some zomes to
                     generate one yourself!</span
                   >
                 </div>

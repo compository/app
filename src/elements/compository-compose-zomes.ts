@@ -14,6 +14,7 @@ import {
   CompositoryService,
   generateDnaFile,
   CompositoryInstallDnaDialog,
+  Dictionary,
 } from '@compository/lib';
 import { List } from 'scoped-material-components/mwc-list';
 import { Button } from 'scoped-material-components/mwc-button';
@@ -26,7 +27,6 @@ import { AppWebsocket, CellId } from '@holochain/conductor-api';
 import { TextField } from 'scoped-material-components/mwc-textfield';
 import { Hashed, serializeHash } from '@holochain-open-dev/common';
 import { Card } from 'scoped-material-components/mwc-card';
-import { Dictionary } from '@holochain-open-dev/common/core-types';
 
 export class CompositoryComposeZomes extends membraneContext(
   Scoped(LitElement) as Constructor<LitElement>

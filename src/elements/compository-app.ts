@@ -30,6 +30,7 @@ import {
 import { CompositoryInstalledCells } from './compository-installed-cells';
 import { TopAppBar } from 'scoped-material-components/mwc-top-app-bar';
 import { Button } from 'scoped-material-components/mwc-button';
+import { DiscoverDnas } from './compository-discover-dnas';
 
 export class CompositoryApp extends (Scoped(
   LitElement
@@ -274,10 +275,16 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
           ></mwc-button>
 
           <div class="fill row" style="width: 100vw; height: 100%; ">
-            <compository-installed-cells
-              class="fill"
-              style="margin: 32px; margin-right: 0;"
-            ></compository-installed-cells>
+            <div class="column">
+              <compository-installed-cells
+                class="fill"
+                style="margin: 32px; margin-right: 0; margin-bottom: 0;"
+              ></compository-installed-cells>
+              <compository-discover-dnas
+                class="fill"
+                style="margin: 32px; margin-right: 0;"
+              ></compository-discover-dnas>
+            </div>
 
             <compository-compose-zomes
               style="margin: 32px;"
@@ -315,6 +322,7 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
       'mwc-top-app-bar': TopAppBar,
       'mwc-button': Button,
       'mwc-card': Card,
+      'compository-discover-dnas': DiscoverDnas,
     };
   }
 

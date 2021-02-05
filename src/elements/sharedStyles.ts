@@ -26,4 +26,9 @@ export const sharedStyles = css`
   :host {
     display: flex;
   }
+
+  .placeholder {
+    opacity: 0.7;
+    text-align: center;
+  }
 `;
