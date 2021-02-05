@@ -68,7 +68,8 @@ export class CompositoryApp extends (Scoped(
             );
 
             if (!this._selectedCellId) {
-              this.displayInstallDna(params.dna);
+              this._nonexistingDna = params.dna;
+              this._loading = false;
             }
           },
           '*': async () => {
@@ -102,34 +103,6 @@ export class CompositoryApp extends (Scoped(
 
   get _compositoryService(): CompositoryService {
     return new CompositoryService(this._appWebsocket, this._compositoryCellId);
-  }
-
-  async displayInstallDna(dnaHash: string, retriesLeft: number = 3) {
-    this._loading = true;
-
-    if (retriesLeft === 0) {
-      this._nonexistingDna = dnaHash;
-      this._loading = false;
-      return;
-    }
-
-    try {
-      const template = await this._compositoryService.getTemplateForDna(
-        dnaHash
-      );
-
-      const dnaFile = await generateDnaFile(
-        this._compositoryService,
-        template.dnaTemplate,
-        template.properties,
-        template.uuid
-      );
-
-      this._installDnaDialog.dnaFile = dnaFile;
-      this._installDnaDialog.open();
-    } catch (e) {
-      this.displayInstallDna(dnaHash, retriesLeft - 1);
-    }
   }
 
   onCellInstalled(e: CustomEvent) {
@@ -275,7 +248,7 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
           ></mwc-button>
 
           <div class="fill row" style="width: 100vw; height: 100%; ">
-            <div class="column">
+            <div class="column fill">
               <compository-installed-cells
                 class="fill"
                 style="margin: 32px; margin-right: 0; margin-bottom: 0;"
@@ -283,6 +256,10 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
               <compository-discover-dnas
                 class="fill"
                 style="margin: 32px; margin-right: 0;"
+                @dna-installed=${(e: CustomEvent) => {
+                  this._selectedCellId = e.detail.cellId;
+                  this._loading = false;
+                }}
               ></compository-discover-dnas>
             </div>
 
@@ -299,13 +276,6 @@ docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 gui
   render() {
     return html`
       <membrane-context-provider id="context-provider">
-        <compository-install-dna-dialog
-          @dna-installed=${(e: CustomEvent) => {
-            this._selectedCellId = e.detail.cellId;
-            this._loading = false;
-          }}
-          id="install-dialog"
-        ></compository-install-dna-dialog>
         ${this.renderContent()}
       </membrane-context-provider>
     `;

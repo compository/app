@@ -148,8 +148,10 @@ export class CompositoryComposeZomes extends membraneContext(
             ${this.zomeDefs.map(
               zomeDef => html`
                 <mwc-check-list-item
-                  .selected=${zomeDef.content.name === 'blocky'}
-                  .disabled=${zomeDef.content.name === 'blocky'}
+                  .selected=${zomeDef.content.name === 'blocky' ||
+                  zomeDef.content.name === 'profiles'}
+                  .disabled=${zomeDef.content.name === 'blocky' ||
+                  zomeDef.content.name === 'profiles'}
                 >
                   ${zomeDef.content.name}
                 </mwc-check-list-item>
