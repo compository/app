@@ -93,8 +93,10 @@ export class DiscoverDnas extends membraneContext(
 
   renderContent() {
     return html` <mwc-card class="fill">
-      <div style="margin: 16px;" class="column fill">
-        <span class="title">Discover DNAs</span>
+      <div class="column fill">
+        <span style="margin: 16px; margin-bottom: 0;" class="title"
+          >Discover DNAs</span
+        >
 
         ${this._allInstantiatedDnasHashes?.length === 0
           ? html`
@@ -106,27 +108,34 @@ export class DiscoverDnas extends membraneContext(
               </div>
             `
           : html`
-              <mwc-list>
-                ${this._allInstantiatedDnasHashes?.map(
-                  hash =>
-                    html`
-                      <div class="row" style="align-items: center;">
-                        <mwc-list-item twoline style="flex: 1;">
-                          <span
-                            >${this._dnaTemplates[hash].dnaTemplate.name}</span
-                          >
-                          <span slot="secondary">${hash}</span>
-                        </mwc-list-item>
-                        <mwc-button
-                          label="INSTALL"
-                          raised
-                          @click=${() => this.displayInstallDna(hash)}
-                          style="margin-right: 16px;"
-                        ></mwc-button>
-                      </div>
-                    `
-                )}
-              </mwc-list>
+              <div class="flex-scrollable-parent">
+                <div class="flex-scrollable-container">
+                  <div class="flex-scrollable-y">
+                    <mwc-list>
+                      ${this._allInstantiatedDnasHashes?.map(
+                        hash =>
+                          html`
+                            <div class="row" style="align-items: center;">
+                              <mwc-list-item twoline style="flex: 1;">
+                                <span
+                                  >${this._dnaTemplates[hash].dnaTemplate
+                                    .name}</span
+                                >
+                                <span slot="secondary">${hash}</span>
+                              </mwc-list-item>
+                              <mwc-button
+                                label="INSTALL"
+                                raised
+                                @click=${() => this.displayInstallDna(hash)}
+                                style="margin-right: 16px;"
+                              ></mwc-button>
+                            </div>
+                          `
+                      )}
+                    </mwc-list>
+                  </div>
+                </div>
+              </div>
             `}
       </div>
     </mwc-card>`;

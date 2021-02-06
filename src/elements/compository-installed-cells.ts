@@ -80,8 +80,8 @@ export class CompositoryInstalledCells extends membraneContext(
       </div>`;
 
     return html` <mwc-card class="fill">
-      <div style="margin: 16px;" class="column fill">
-        <span class="title">Installed DNAs</span>
+      <div class="column fill">
+        <span style="margin: 16px; margin-bottom: 0;" class="title">Installed DNAs</span>
         ${this.getNonCompositoryCellIds().length === 0
           ? html`
               <div class="fill center-content">
@@ -90,30 +90,40 @@ export class CompositoryInstalledCells extends membraneContext(
                     >You don't have any generated DNAs installed yet.</span
                   >
                   <span class="placeholder"
-                    >Discover one of the DNAs available below, or compose some zomes to
-                    generate one yourself!</span
+                    >Discover one of the DNAs available below, or compose some
+                    zomes to generate one yourself!</span
                   >
                 </div>
               </div>
             `
           : html`
-              <mwc-list>
-                ${this.getNonCompositoryCellIds().map(
-                  cellId =>
-                    html`<mwc-list-item
-                      @click=${() =>
-                        router.navigate(`/dna/${serializeHash(cellId[0])}`)}
-                      twoline
-                    >
-                      <span
-                        >${this._dnaTemplateNames[
-                          serializeHash(cellId[0])
-                        ]}</span
-                      >
-                      <span slot="secondary">${serializeHash(cellId[0])}</span>
-                    </mwc-list-item>`
-                )}
-              </mwc-list>
+              <div class="flex-scrollable-parent">
+                <div class="flex-scrollable-container">
+                  <div class="flex-scrollable-y">
+                    <mwc-list>
+                      ${this.getNonCompositoryCellIds().map(
+                        cellId =>
+                          html`<mwc-list-item
+                            @click=${() =>
+                              router.navigate(
+                                `/dna/${serializeHash(cellId[0])}`
+                              )}
+                            twoline
+                          >
+                            <span
+                              >${this._dnaTemplateNames[
+                                serializeHash(cellId[0])
+                              ]}</span
+                            >
+                            <span slot="secondary"
+                              >${serializeHash(cellId[0])}</span
+                            >
+                          </mwc-list-item>`
+                      )}
+                    </mwc-list>
+                  </div>
+                </div>
+              </div>
             `}
       </div>
     </mwc-card>`;
