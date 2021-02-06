@@ -490,7 +490,7 @@ var e=function(t,A){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Arr
           </span>
 
           <pre style="margin: 4px 0;">
-docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 -p 8888:8888 guillemcordoba/compository:0.3
+docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 -p 8888:8888 guillemcordoba/compository:0.4
           </pre>
           <span style="margin-bottom: 16px;"><strong>Lastly, navigate to <a href="http://localhost:8888/">http://localhost:8888/</a> to enter the web app.</strong></span>
           <span>
