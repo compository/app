@@ -9,6 +9,7 @@ import { CompositoryInstallDnaDialog, CompositoryService } from '@compository/li
 import { CompositoryInstalledCells } from './compository-installed-cells';
 import { TopAppBar } from 'scoped-material-components/mwc-top-app-bar';
 import { Button } from 'scoped-material-components/mwc-button';
+import { DiscoverDnas } from './compository-discover-dnas';
 declare const CompositoryApp_base: Constructor<LitElement>;
 export declare class CompositoryApp extends CompositoryApp_base {
     _selectedCellId: CellId | undefined;
@@ -23,7 +24,6 @@ export declare class CompositoryApp extends CompositoryApp_base {
     firstUpdated(): Promise<void>;
     connectToHolochain(): Promise<void>;
     get _compositoryService(): CompositoryService;
-    displayInstallDna(dnaHash: string, retriesLeft?: number): Promise<void>;
     onCellInstalled(e: CustomEvent): void;
     renderNonexistingDna(): import("lit-element").TemplateResult;
     renderHolochainNotPresent(): import("lit-element").TemplateResult;
@@ -39,6 +39,7 @@ export declare class CompositoryApp extends CompositoryApp_base {
         'mwc-top-app-bar': typeof TopAppBar;
         'mwc-button': typeof Button;
         'mwc-card': typeof Card;
+        'compository-discover-dnas': typeof DiscoverDnas;
     };
     static get styles(): import("lit-element").CSSResult[];
 }
