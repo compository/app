@@ -199,7 +199,7 @@ export class CompositoryApp extends (Scoped(
           </span>
 
           <pre style="margin: 4px 0;">
-docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 -p 8888:8888 guillemcordoba/compository:0.4
+docker run -it --init -v compository5:/database -p 22222:22222 -p 22223:22223 -p 8888:8888 guillemcordoba/compository:0.5
           </pre>
           <span style="margin-bottom: 16px;"><strong>Lastly, navigate to <a href="http://localhost:8888/">http://localhost:8888/</a> to enter the web app.</strong></span>
           <span>
