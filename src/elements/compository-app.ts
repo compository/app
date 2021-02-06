@@ -142,7 +142,7 @@ export class CompositoryApp extends (Scoped(
 
   renderHolochainNotPresent() {
     return html` <div class="column fill center-content">
-      <mwc-card style="width: 900px; margin-bottom: 48px;">
+      <mwc-card style="width: 1100px; margin-bottom: 48px;">
         <div class="column" style="margin: 16px">
           <span class="title" style="margin-bottom: 24px; font-size: 32px;"
             >Compository</span
@@ -168,14 +168,6 @@ export class CompositoryApp extends (Scoped(
 
           <hr>
 
-          <span style="font-size: 24px; margin-bottom: 16px; margin-top: 24px;"
-            >Holochain conductor not found</span
-          >
-          <span style="margin-bottom: 20px;"
-            >It seems that you don't have the compository docker container
-            running with admin URL at <i>${ADMIN_URL}</i>. Install it and
-            refresh this page.
-          </span>
           <span style="font-size: 20px; margin-top: 16px; margin-bottom: 8px;"
             >Running Without a Terminal</span
           >
@@ -195,6 +187,7 @@ export class CompositoryApp extends (Scoped(
              the "compository-launch.command" file</a>. You can
               clean up the persistent storage executing the "compository-cleanup.command" file.
             </li>
+            <li><strong>Lastly, navigate to <a href="http://localhost:8888/">http://localhost:8888/</a> to enter the web app.</strong></li>
           </ul>
 
           <span style="font-size: 20px; margin-bottom: 16px; margin-top: 16px;"
@@ -202,13 +195,13 @@ export class CompositoryApp extends (Scoped(
           >
 
           <span style="margin-bottom: 20px;">
-            Assuming you have docker already installed, run this:
+            Assuming you have docker already installed, <strong>run this</strong>:
           </span>
 
           <pre style="margin: 4px 0;">
-docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 guillemcordoba/compository:0.2
-          </pre
-          >
+docker run -it --init -v compository:/database -p 22222:22222 -p 22223:22223 -p 8888:8888 guillemcordoba/compository:0.3
+          </pre>
+          <span style="margin-bottom: 16px;"><strong>Lastly, navigate to <a href="http://localhost:8888/">http://localhost:8888/</a> to enter the web app.</strong></span>
           <span>
             You can clean up the persistent storage by removing the docker
             volume with these commands:
