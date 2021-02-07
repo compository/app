@@ -17,6 +17,7 @@ import { ListItem } from 'scoped-material-components/mwc-list-item';
 import { serializeHash } from '@holochain-open-dev/common';
 import { CircularProgress } from 'scoped-material-components/mwc-circular-progress';
 import { Button } from 'scoped-material-components/mwc-button';
+import { Snackbar } from 'scoped-material-components/mwc-snackbar';
 
 export class DiscoverDnas extends membraneContext(
   Scoped(LitElement) as Constructor<LitElement>
@@ -85,9 +86,7 @@ export class DiscoverDnas extends membraneContext(
       dialog.dnaFile = dnaFile;
       dialog.open();
     } catch (e) {
-      console.log(e);
-
-      this.displayInstallDna(dnaHash, retriesLeft - 1);
+      (this.shadowRoot?.getElementById('error-snackbar') as Snackbar).show();
     }
   }
 
@@ -141,8 +140,17 @@ export class DiscoverDnas extends membraneContext(
     </mwc-card>`;
   }
 
+  renderErrorSnackbar() {
+    return html`
+      <mwc-snackbar
+        id="error-snackbar"
+        labelText="Couldn't generate the DNA due to gossip inconsistencies. Please try again in a few minutes."
+      ></mwc-snackbar>
+    `;
+  }
   render() {
     return html`
+      ${this.renderErrorSnackbar()}
       <compository-install-dna-dialog
         id="install-dialog"
       ></compository-install-dna-dialog>
@@ -169,6 +177,7 @@ export class DiscoverDnas extends membraneContext(
     return {
       'mwc-card': Card,
       'mwc-button': Button,
+      'mwc-snackbar': Snackbar,
       'mwc-list': List,
       'mwc-circular-progress': CircularProgress,
       'mwc-list-item': ListItem,
