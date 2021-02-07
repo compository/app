@@ -5,6 +5,7 @@ import { List } from 'scoped-material-components/mwc-list';
 import { ListItem } from 'scoped-material-components/mwc-list-item';
 import { CircularProgress } from 'scoped-material-components/mwc-circular-progress';
 import { Button } from 'scoped-material-components/mwc-button';
+import { Snackbar } from 'scoped-material-components/mwc-snackbar';
 declare const DiscoverDnas_base: Constructor<LitElement> & Constructor<{
     membraneContext: import("@holochain-open-dev/membrane-context").MembraneContext;
 }>;
@@ -16,11 +17,13 @@ export declare class DiscoverDnas extends DiscoverDnas_base {
     firstUpdated(): Promise<void>;
     displayInstallDna(dnaHash: string, retriesLeft?: number): Promise<void>;
     renderContent(): import("lit-element").TemplateResult;
+    renderErrorSnackbar(): import("lit-element").TemplateResult;
     render(): import("lit-element").TemplateResult;
     static get styles(): import("lit-element").CSSResult[];
     static get scopedElements(): {
         'mwc-card': typeof Card;
         'mwc-button': typeof Button;
+        'mwc-snackbar': typeof Snackbar;
         'mwc-list': typeof List;
         'mwc-circular-progress': typeof CircularProgress;
         'mwc-list-item': typeof ListItem;
