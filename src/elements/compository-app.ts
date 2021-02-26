@@ -11,8 +11,9 @@ import { CompositoryComposeZomes } from './compository-compose-zomes';
 import { AppWebsocket, AdminWebsocket, CellId } from '@holochain/conductor-api';
 import { Card } from 'scoped-material-components/mwc-card';
 import { MembraneContextProvider } from '@holochain-open-dev/membrane-context';
-import { BlockyDnaBoard } from '@compository/blocky';
-import { serializeHash } from '@holochain-open-dev/common';
+import { DnaGrapes } from '@compository/grapes';
+import { serializeHash } from '@holochain-open-dev/core-types';
+import { BaseElement } from '@holochain-open-dev/common';
 import { CircularProgress } from 'scoped-material-components/mwc-circular-progress';
 import { sharedStyles } from './sharedStyles';
 import { router } from '../router';
@@ -32,9 +33,7 @@ import { TopAppBar } from 'scoped-material-components/mwc-top-app-bar';
 import { Button } from 'scoped-material-components/mwc-button';
 import { DiscoverDnas } from './compository-discover-dnas';
 
-export class CompositoryApp extends (Scoped(
-  LitElement
-) as Constructor<LitElement>) {
+export class CompositoryApp extends BaseElement {
   @property({ type: Array })
   _selectedCellId: CellId | undefined = undefined;
 
@@ -53,6 +52,10 @@ export class CompositoryApp extends (Scoped(
   _appWebsocket!: AppWebsocket;
   _adminWebsocket!: AdminWebsocket;
   _compositoryCellId!: CellId;
+
+  get _compositoryService(): CompositoryService {
+    return new CompositoryService(this._appWebsocket, this._compositoryCellId);
+  }
 
   async firstUpdated() {
     try {
@@ -99,10 +102,17 @@ export class CompositoryApp extends (Scoped(
     this._contextProvider.adminWebsocket = this._adminWebsocket;
     this._contextProvider.appWebsocket = this._appWebsocket;
     this._contextProvider.cellId = this._compositoryCellId;
-  }
 
-  get _compositoryService(): CompositoryService {
-    return new CompositoryService(this._appWebsocket, this._compositoryCellId);
+    const compositoryService = this._compositoryService;
+    this.defineScopedElement(
+      'dna-grapes',
+      class extends DnaGrapes {
+        get _compositoryService() {
+          return compositoryService;
+        }
+      }
+    );
+
   }
 
   onCellInstalled(e: CustomEvent) {
@@ -220,12 +230,11 @@ docker run -it --init -v compository6:/database -p 22222:22222 -p 22223:22223 -p
       </div>`;
     if (!this._holochainPresent) return this.renderHolochainNotPresent();
     if (this._selectedCellId)
-      return html`<blocky-dna-board
+      return html`<dna-grapes
         style="flex: 1;"
-        .cellIdToDisplay=${this._selectedCellId}
-        .compositoryCellId=${this._compositoryCellId}
+        .cellId=${this._selectedCellId}
         @navigate-back=${() => router.navigate('/')}
-      ></blocky-dna-board>`;
+      ></dna-grapes>`;
     else if (this._nonexistingDna) return this.renderNonexistingDna();
     else
       return html`
@@ -250,7 +259,8 @@ docker run -it --init -v compository6:/database -p 22222:22222 -p 22223:22223 -p
                 class="fill"
                 style="margin: 32px; margin-right: 0;"
                 @dna-installed=${(e: CustomEvent) => {
-                  this._selectedCellId = e.detail.cellId;
+                  router.navigate(`/dna/${serializeHash(e.detail.cellId[0])}`);
+
                   this._loading = false;
                 }}
               ></compository-discover-dnas>
@@ -274,11 +284,10 @@ docker run -it --init -v compository6:/database -p 22222:22222 -p 22223:22223 -p
     `;
   }
 
-  static get scopedElements() {
+  getScopedElements(): any {
     return {
-      'membrane-context-provider': MembraneContextProvider,
+      'membrane-context-provider': (MembraneContextProvider as unknown) as typeof HTMLElement,
       'compository-compose-zomes': CompositoryComposeZomes,
-      'blocky-dna-board': BlockyDnaBoard,
       'compository-install-dna-dialog': CompositoryInstallDnaDialog,
       'compository-installed-cells': CompositoryInstalledCells,
       'mwc-circular-progress': CircularProgress,

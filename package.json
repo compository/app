@@ -18,15 +18,16 @@
     "gh-pages": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
-    "@compository/blocky": "git+https://github.com/compository/blocky.git#ui-build",
+    "@compository/grapes": "github:compository/grapes#ui-build",
     "@compository/lib": "git+https://github.com/compository/lib.git#build",
     "@holochain-open-dev/common": "git+https://github.com/holochain-open-dev/common.git#ui-build",
+    "@holochain-open-dev/core-types": "git+https://github.com/holochain-open-dev/core-types.git#build",
     "@holochain-open-dev/membrane-context": "^0.1.1",
     "@holochain/conductor-api": "0.0.1-dev.16",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
     "navigo": "^7.1.2",
-    "scoped-material-components": "git+https://github.com/guillemcordoba/scoped-material-components.git#build"
+    "scoped-material-components": "^0.1.1"
   },
   "devDependencies": {
     "@open-wc/building-rollup": "^1.9.4",
@@ -38,14 +39,14 @@
     "@rollup/plugin-typescript": "^8.1.0",
     "@types/navigo": "^7.0.1",
     "@types/node": "13.11.1",
-    "@typescript-eslint/eslint-plugin": "^2.20.0",
-    "@typescript-eslint/parser": "^2.20.0",
+    "@typescript-eslint/eslint-plugin": "^4.15.2",
+    "@typescript-eslint/parser": "^4.15.2",
     "@web/dev-server": "0.0.19",
     "@web/dev-server-rollup": "^0.2.12",
     "@web/test-runner": "^0.7.41",
     "concurrently": "^5.1.0",
     "deepmerge": "^4.2.2",
-    "eslint": "^6.1.0",
+    "eslint": "^7.5.0",
     "eslint-config-prettier": "^6.11.0",
     "gh-pages": "^3.1.0",
     "husky": "^1.0.0",

@@ -25,14 +25,14 @@ import { membraneContext } from '@holochain-open-dev/membrane-context';
 import { sharedStyles } from './sharedStyles';
 import { AppWebsocket, CellId } from '@holochain/conductor-api';
 import { TextField } from 'scoped-material-components/mwc-textfield';
-import { Hashed, serializeHash } from '@holochain-open-dev/common';
+import { HoloHashed, serializeHash } from '@holochain-open-dev/core-types';
 import { Card } from 'scoped-material-components/mwc-card';
 
 export class CompositoryComposeZomes extends membraneContext(
   Scoped(LitElement) as Constructor<LitElement>
 ) {
   @property()
-  zomeDefs!: Array<Hashed<ZomeDef>>;
+  zomeDefs!: Array<HoloHashed<ZomeDef>>;
 
   @query('#install-dna-dialog')
   _installDnaDialog!: CompositoryInstallDnaDialog;
@@ -67,7 +67,7 @@ export class CompositoryComposeZomes extends membraneContext(
     // TODO: fix this
     const allZomeDefs = await this._compositoryService.getAllZomeDefs();
 
-    const zomeDefsByName: Dictionary<Hashed<ZomeDef>> = {};
+    const zomeDefsByName: Dictionary<HoloHashed<ZomeDef>> = {};
     for (const zomeDef of allZomeDefs) {
       zomeDefsByName[zomeDef.content.name] = zomeDef;
     }
@@ -76,7 +76,7 @@ export class CompositoryComposeZomes extends membraneContext(
   }
 
   async createDnaTemplate() {
-    const zomeDefs: Array<Hashed<ZomeDef>> = Array.from(
+    const zomeDefs: Array<HoloHashed<ZomeDef>> = Array.from(
       this._selectedIndexes
     ).map(i => this.zomeDefs[i]);
 

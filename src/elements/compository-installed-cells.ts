@@ -1,5 +1,5 @@
 import { CompositoryService, Dictionary } from '@compository/lib';
-import { serializeHash } from '@holochain-open-dev/common';
+import { serializeHash } from '@holochain-open-dev/core-types';
 import { membraneContext } from '@holochain-open-dev/membrane-context';
 import { CellId, AdminWebsocket, AppWebsocket } from '@holochain/conductor-api';
 import { ScopedElementsMixin as Scoped } from '@open-wc/scoped-elements';
