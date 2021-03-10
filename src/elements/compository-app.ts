@@ -8,7 +8,7 @@ import {
 } from 'lit-element';
 import { AppWebsocket, AdminWebsocket, CellId } from '@holochain/conductor-api';
 import { Card } from 'scoped-material-components/mwc-card';
-import { DnaGrapes } from '@compository/grapes';
+import { DnaGrapes, GrapesService } from '@compository/grapes';
 import { serializeHash } from '@holochain-open-dev/core-types';
 import { BaseElement } from '@holochain-open-dev/common';
 import { CircularProgress } from 'scoped-material-components/mwc-circular-progress';
@@ -303,6 +303,9 @@ docker run -it --init -v compository6:/database -p 22222:22222 -p 22223:22223 -p
             <div class="column fill">
               <installed-cells
                 class="fill"
+                @cell-selected=${(e: CustomEvent) => {
+                  router.navigate(`/dna/${serializeHash(e.detail.cellId[0])}`);
+                }}
                 style="margin: 32px; margin-right: 0; margin-bottom: 0;"
               ></installed-cells>
               <discover-dnas

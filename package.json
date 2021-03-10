@@ -26,7 +26,7 @@
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
     "navigo": "^7.1.2",
-    "scoped-material-components": "^0.1.2"
+    "scoped-material-components": "^0.1.3"
   },
   "devDependencies": {
     "@open-wc/building-rollup": "^1.9.4",
