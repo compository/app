@@ -6,11 +6,8 @@ import {
   property,
   query,
 } from 'lit-element';
-import { ScopedElementsMixin as Scoped } from '@open-wc/scoped-elements';
-import { CompositoryComposeZomes } from './compository-compose-zomes';
 import { AppWebsocket, AdminWebsocket, CellId } from '@holochain/conductor-api';
 import { Card } from 'scoped-material-components/mwc-card';
-import { MembraneContextProvider } from '@holochain-open-dev/membrane-context';
 import { DnaGrapes } from '@compository/grapes';
 import { serializeHash } from '@holochain-open-dev/core-types';
 import { BaseElement } from '@holochain-open-dev/common';
@@ -24,14 +21,17 @@ import {
   DOCKER_DESTKOP_URL,
 } from '../constants';
 import {
-  CompositoryInstallDnaDialog,
+  InstallDnaDialog,
+  InstalledCells,
+  ComposeZomes,
+  DiscoverDnas,
   CompositoryService,
-  generateDnaFile,
+  connectService,
+  PublishZome,
 } from '@compository/lib';
-import { CompositoryInstalledCells } from './compository-installed-cells';
 import { TopAppBar } from 'scoped-material-components/mwc-top-app-bar';
 import { Button } from 'scoped-material-components/mwc-button';
-import { DiscoverDnas } from './compository-discover-dnas';
+import { IconButton } from 'scoped-material-components/mwc-icon-button';
 
 export class CompositoryApp extends BaseElement {
   @property({ type: Array })
@@ -41,20 +41,25 @@ export class CompositoryApp extends BaseElement {
   _holochainPresent = false;
   @property({ type: Array })
   _loading = true;
-  @query('#context-provider')
-  _contextProvider!: MembraneContextProvider;
   @query('#install-dialog')
-  _installDnaDialog!: CompositoryInstallDnaDialog;
+  _installDnaDialog!: InstallDnaDialog;
 
   @property({ type: String })
   _nonexistingDna: string | undefined = undefined;
+
+  @property({ type: Boolean })
+  _activeView: 'home' | 'dna' | 'non-existing-dna' | 'publish-zome' = 'home';
 
   _appWebsocket!: AppWebsocket;
   _adminWebsocket!: AdminWebsocket;
   _compositoryCellId!: CellId;
 
   get _compositoryService(): CompositoryService {
-    return new CompositoryService(this._appWebsocket, this._compositoryCellId);
+    return new CompositoryService(
+      this._adminWebsocket,
+      this._appWebsocket,
+      this._compositoryCellId
+    );
   }
 
   async firstUpdated() {
@@ -71,11 +76,17 @@ export class CompositoryApp extends BaseElement {
             );
 
             if (!this._selectedCellId) {
+              this._activeView = 'non-existing-dna';
               this._nonexistingDna = params.dna;
               this._loading = false;
             }
+            this._activeView = 'dna';
+          },
+          '/publish-zome': () => {
+            this._activeView = 'publish-zome';
           },
           '*': async () => {
+            this._activeView = 'home';
             this._selectedCellId = undefined;
           },
         })
@@ -99,10 +110,6 @@ export class CompositoryApp extends BaseElement {
 
     if (!this._compositoryCellId) throw new Error('Compository DNA not found');
 
-    this._contextProvider.adminWebsocket = this._adminWebsocket;
-    this._contextProvider.appWebsocket = this._appWebsocket;
-    this._contextProvider.cellId = this._compositoryCellId;
-
     const compositoryService = this._compositoryService;
     this.defineScopedElement(
       'dna-grapes',
@@ -113,6 +120,26 @@ export class CompositoryApp extends BaseElement {
       }
     );
 
+    this.defineScopedElement(
+      'discover-dnas',
+      connectService(DiscoverDnas, compositoryService)
+    );
+    this.defineScopedElement(
+      'install-dna-dialog',
+      connectService(InstallDnaDialog, compositoryService)
+    );
+    this.defineScopedElement(
+      'compose-zomes',
+      connectService(ComposeZomes, compositoryService)
+    );
+    this.defineScopedElement(
+      'installed-cells',
+      connectService(InstalledCells, compositoryService)
+    );
+    this.defineScopedElement(
+      'publish-zome',
+      connectService(PublishZome, compositoryService)
+    );
   }
 
   onCellInstalled(e: CustomEvent) {
@@ -223,19 +250,43 @@ docker run -it --init -v compository6:/database -p 22222:22222 -p 22223:22223 -p
     </div>`;
   }
 
-  renderContent() {
+  renderPublishZome() {
+    return html`
+      <mwc-top-app-bar style="flex: 1; display: flex; justify-content: center">
+        <mwc-icon-button
+          icon="arrow_back"
+          slot="navigationIcon"
+          style="--mdc-theme-primary: white;"
+          @click=${() => router.navigate(`/`)}
+        ></mwc-icon-button>
+        <div slot="title">Publish your own zome</div>
+
+        <div class="fill column" style="padding: 16px;">
+          <publish-zome
+            style="width: 700px;"
+            @zome-published=${() => router.navigate('/')}
+          ></publish-zome>
+        </div>
+      </mwc-top-app-bar>
+    `;
+  }
+
+  render() {
     if (this._loading)
       return html`<div class="fill center-content">
         <mwc-circular-progress indeterminate></mwc-circular-progress>
       </div>`;
     if (!this._holochainPresent) return this.renderHolochainNotPresent();
-    if (this._selectedCellId)
+    if (this._activeView === 'dna')
       return html`<dna-grapes
         style="flex: 1;"
         .cellId=${this._selectedCellId}
         @navigate-back=${() => router.navigate('/')}
       ></dna-grapes>`;
-    else if (this._nonexistingDna) return this.renderNonexistingDna();
+    else if (this._activeView === 'non-existing-dna')
+      return this.renderNonexistingDna();
+    else if (this._activeView === 'publish-zome')
+      return this.renderPublishZome();
     else
       return html`
         <mwc-top-app-bar style="flex: 1; display: flex;">
@@ -243,19 +294,18 @@ docker run -it --init -v compository6:/database -p 22222:22222 -p 22223:22223 -p
 
           <mwc-button
             slot="actionItems"
-            label="How to publish your zome"
+            label="Publish a zome"
             style="--mdc-theme-primary: white;"
-            @click=${() =>
-              (location.href = 'https://github.com/compository/cli')}
+            @click=${() => router.navigate(`/publish-zome`)}
           ></mwc-button>
 
           <div class="fill row" style="width: 100vw; height: 100%; ">
             <div class="column fill">
-              <compository-installed-cells
+              <installed-cells
                 class="fill"
                 style="margin: 32px; margin-right: 0; margin-bottom: 0;"
-              ></compository-installed-cells>
-              <compository-discover-dnas
+              ></installed-cells>
+              <discover-dnas
                 class="fill"
                 style="margin: 32px; margin-right: 0;"
                 @dna-installed=${(e: CustomEvent) => {
@@ -263,38 +313,26 @@ docker run -it --init -v compository6:/database -p 22222:22222 -p 22223:22223 -p
 
                   this._loading = false;
                 }}
-              ></compository-discover-dnas>
+              ></discover-dnas>
             </div>
 
-            <compository-compose-zomes
+            <compose-zomes
               style="margin: 32px;"
               class="fill"
               @dna-installed=${(e: CustomEvent) => this.onCellInstalled(e)}
-            ></compository-compose-zomes>
+            ></compose-zomes>
           </div>
         </mwc-top-app-bar>
       `;
   }
 
-  render() {
-    return html`
-      <membrane-context-provider id="context-provider">
-        ${this.renderContent()}
-      </membrane-context-provider>
-    `;
-  }
-
   getScopedElements(): any {
     return {
-      'membrane-context-provider': (MembraneContextProvider as unknown) as typeof HTMLElement,
-      'compository-compose-zomes': CompositoryComposeZomes,
-      'compository-install-dna-dialog': CompositoryInstallDnaDialog,
-      'compository-installed-cells': CompositoryInstalledCells,
       'mwc-circular-progress': CircularProgress,
       'mwc-top-app-bar': TopAppBar,
       'mwc-button': Button,
+      'mwc-icon-button': IconButton,
       'mwc-card': Card,
-      'compository-discover-dnas': DiscoverDnas,
     };
   }
 

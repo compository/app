@@ -18,16 +18,15 @@
     "gh-pages": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
-    "@compository/grapes": "github:compository/grapes#ui-build",
+    "@compository/grapes": "git+https://github.com/compository/grapes.git#ui-build",
     "@compository/lib": "git+https://github.com/compository/lib.git#build",
     "@holochain-open-dev/common": "git+https://github.com/holochain-open-dev/common.git#ui-build",
     "@holochain-open-dev/core-types": "git+https://github.com/holochain-open-dev/core-types.git#build",
-    "@holochain-open-dev/membrane-context": "^0.1.1",
-    "@holochain/conductor-api": "0.0.1-dev.16",
+    "@holochain/conductor-api": "git+https://github.com/holochain/holochain-conductor-api.git",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
     "navigo": "^7.1.2",
-    "scoped-material-components": "^0.1.1"
+    "scoped-material-components": "^0.1.2"
   },
   "devDependencies": {
     "@open-wc/building-rollup": "^1.9.4",
