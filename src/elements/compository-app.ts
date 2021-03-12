@@ -236,7 +236,7 @@ export class CompositoryApp extends BaseElement {
           </span>
 
           <pre style="margin: 4px 0;">
-docker run -it --init -v compository6:/database -p 22222:22222 -p 22223:22223 -p 8888:8888 guillemcordoba/compository:0.6
+docker run -it --init -v compository7:/database -p 22222:22222 -p 22223:22223 -p 8888:8888 guillemcordoba/compository:0.7
           </pre>
           <span style="margin-bottom: 16px;"><strong>Lastly, navigate to <a href="http://localhost:8888/">http://localhost:8888/</a> to enter the web app.</strong></span>
           <span>
@@ -244,7 +244,7 @@ docker run -it --init -v compository6:/database -p 22222:22222 -p 22223:22223 -p
             volume with these commands:
           </span>
           <pre>docker rm $(docker ps -a -f status=exited -q)</pre>
-          <pre style="margin: 0;">docker volume rm --force compository6</pre>
+          <pre style="margin: 0;">docker volume rm --force compository7</pre>
         </div>
       </mwc-card>
     </div>`;
@@ -276,7 +276,8 @@ docker run -it --init -v compository6:/database -p 22222:22222 -p 22223:22223 -p
       return html`<div class="fill center-content">
         <mwc-circular-progress indeterminate></mwc-circular-progress>
       </div>`;
-    if (!this._holochainPresent) return this.renderHolochainNotPresent();
+      // @ts-ignore
+    if (process.env.GH_PAGES === "true" || !this._holochainPresent) return this.renderHolochainNotPresent();
     if (this._activeView === 'dna')
       return html`<dna-grapes
         style="flex: 1;"

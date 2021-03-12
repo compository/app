@@ -15,14 +15,14 @@
     "format": "eslint --ext .ts,.html . --fix --ignore-path .gitignore",
     "test": "tsc && web-test-runner --coverage",
     "test:watch": "web-test-runner --watch",
-    "gh-pages": "npm run build && gh-pages -d dist"
+    "gh-pages": "GH_PAGES=true npm run build && gh-pages -d dist"
   },
   "dependencies": {
     "@compository/grapes": "git+https://github.com/compository/grapes.git#ui-build",
     "@compository/lib": "git+https://github.com/compository/lib.git#build",
     "@holochain-open-dev/common": "git+https://github.com/holochain-open-dev/common.git#ui-build",
     "@holochain-open-dev/core-types": "git+https://github.com/holochain-open-dev/core-types.git#build",
-    "@holochain/conductor-api": "git+https://github.com/holochain/holochain-conductor-api.git",
+    "@holochain/conductor-api": "^0.0.1",
     "lit-element": "^2.2.1",
     "lit-html": "^1.1.2",
     "navigo": "^7.1.2",
