@@ -15,7 +15,8 @@
     "format": "eslint --ext .ts,.html . --fix --ignore-path .gitignore",
     "test": "tsc && web-test-runner --coverage",
     "test:watch": "web-test-runner --watch",
-    "gh-pages": "GH_PAGES=true npm run build && gh-pages -d dist"
+    "gh-pages": "GH_PAGES=true npm run build && gh-pages -d dist",
+    "file-storage-provider": "FILE_STORAGE_PROVIDER=true npm start"
   },
   "dependencies": {
     "@compository/grapes": "git+https://github.com/compository/grapes.git#ui-build",

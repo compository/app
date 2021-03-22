@@ -111,6 +111,19 @@ export class CompositoryApp extends BaseElement {
     if (!this._compositoryCellId) throw new Error('Compository DNA not found');
 
     const compositoryService = this._compositoryService;
+
+    if (process.env.FILE_STORAGE_PROVIDER) {
+      await this._appWebsocket.callZome({
+        cap: null,
+        cell_id: this._compositoryCellId,
+        zome_name: 'file_storage',
+        fn_name: 'announce_as_provider',
+        payload: null,
+        provenance: this._compositoryCellId[1],
+      });
+
+      console.log('announced!');
+    }
     this.defineScopedElement(
       'dna-grapes',
       class extends DnaGrapes {
@@ -276,8 +289,9 @@ docker run -it --init -v compository7:/database -p 22222:22222 -p 22223:22223 -p
       return html`<div class="fill center-content">
         <mwc-circular-progress indeterminate></mwc-circular-progress>
       </div>`;
-      // @ts-ignore
-    if (process.env.GH_PAGES === "true" || !this._holochainPresent) return this.renderHolochainNotPresent();
+    // @ts-ignore
+    if (process.env.GH_PAGES === 'true' || !this._holochainPresent)
+      return this.renderHolochainNotPresent();
     if (this._activeView === 'dna')
       return html`<dna-grapes
         style="flex: 1;"

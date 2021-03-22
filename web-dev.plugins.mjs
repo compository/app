@@ -13,6 +13,9 @@ export default [
     'process.env.CONDUCTOR_URL': process.env.CONDUCTOR_URL
       ? `"${process.env.CONDUCTOR_URL}"`
       : 'undefined',
+    'process.env.FILE_STORAGE_PROVIDER': process.env.FILE_STORAGE_PROVIDER
+      ? 'true'
+      : 'false',
   }),
   builtins(),
   commonjs({
