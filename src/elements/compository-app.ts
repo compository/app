@@ -100,7 +100,7 @@ export class CompositoryApp extends BaseElement {
 
   async connectToHolochain() {
     this._adminWebsocket = await AdminWebsocket.connect(ADMIN_URL);
-    this._appWebsocket = await AppWebsocket.connect(APP_URL, 30000);
+    this._appWebsocket = await AppWebsocket.connect(APP_URL, 300000);
 
     const cellIds = await this._adminWebsocket.listCellIds();
 
